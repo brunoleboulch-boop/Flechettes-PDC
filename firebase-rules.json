@@ -14,9 +14,48 @@
             "v": {
               ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= (($metric === 'volee' || $metric === 'avg') ? 180 : ($metric === 'checkout') ? 170 : ($metric === 'rounds') ? 100 : ($metric === 'legDarts' || $metric === 'darts') ? 300 : 5000)"
             },
-            "d": { ".validate": "newData.isString() && newData.val().length === 10" },
-            "name": { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 40" },
-            "$other": { ".validate": false }
+            "d": {
+              ".validate": "newData.isString() && newData.val().length === 10"
+            },
+            "name": {
+              ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 40"
+            },
+            "mb": {
+              ".validate": "newData.isString() && newData.val().length <= 200"
+            },
+            "$other": {
+              ".validate": false
+            }
+          }
+        }
+      }
+    },
+    "roster": {
+      ".read": true,
+      "players": {
+        "$p": {
+          ".write": "!data.exists() && newData.exists()",
+          ".validate": "$p.length > 0 && $p.length <= 40 && newData.hasChildren(['name'])",
+          "name": {
+            ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 20"
+          },
+          "$other": {
+            ".validate": false
+          }
+        }
+      },
+      "teams": {
+        "$t": {
+          ".write": "!data.exists() && newData.exists()",
+          ".validate": "$t.length > 0 && $t.length <= 40 && newData.hasChildren(['name', 'mb'])",
+          "name": {
+            ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 20"
+          },
+          "mb": {
+            ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 200"
+          },
+          "$other": {
+            ".validate": false
           }
         }
       }

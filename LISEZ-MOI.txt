@@ -26,6 +26,25 @@ Ce qui a changé par rapport à votre fichier d'origine
   - Cricket : le bouton « Annuler » retire maintenant aussi les marques et les points.
   - 501/301/701 clavier : un tour « anti-jeu » ne compte plus dans la moyenne.
 
+Rechercher un joueur ou une équipe
+  « Meilleurs scores » : la barre de recherche accepte un prénom ou un nom d'équipe. Toucher un nom (dans la
+  recherche, un podium ou un tableau) ouvre sa fiche : tous ses records, son rang au club, ses records en équipe.
+  Avec la base commune, tout le monde voit les records de chacun.
+
+Joueurs partagés entre les téléphones (avec la base du club)
+  Les joueurs et les équipes enregistrés sont proposés dans le champ nom de tous les téléphones.
+  Pour en ajouter un : saisir le prénom ou le pseudo dans un jeu, puis toucher « Enregistrer dans la base du club »
+  (ou l'ajouter dans « Joueurs et équipes »). Une confirmation rappelle de vérifier l'orthographe : le nom sera
+  visible par tous et seule la personne qui administre la base pourra le corriger ou le supprimer.
+  Sans base commune, les noms restent sur chaque téléphone et sont mémorisés automatiquement.
+
+Équipes
+  Bouton « Joueurs et équipes » : donner un nom à l'équipe, toucher ses joueurs (2 à 4), « Créer l'équipe ».
+  Dans n'importe quel jeu, l'équipe se choisit dans le champ nom comme un joueur ; elle compte alors pour un seul participant.
+  Ses records sont classés à part (podium des équipes), avec les noms des joueurs sous chaque score.
+  Une équipe ne peut pas porter le nom d'un joueur. Si la composition d'une équipe change, les records déjà
+  enregistrés gardent les noms des joueurs qui les ont réalisés.
+
 Meilleurs scores
   Capital : meilleur score.
   501 (tableau) : partie la plus courte (en volées) et plus haute volée.

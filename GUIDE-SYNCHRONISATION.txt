@@ -43,10 +43,24 @@ Mise en place (environ 10 minutes, gratuit, sans carte bancaire)
      - Sur un second téléphone, constater que les scores du premier apparaissent.
      - Si le message indique « Envoi refusé », les règles de l'étape 3 ne sont pas publiées correctement.
 
+Passage à la V6 (joueurs et équipes partagés) : republier les règles
+  Le fichier firebase-rules.json de la V6 contient une section « roster » (liste des joueurs et des équipes).
+  Même marche à suivre que ci-dessous : Realtime Database > Règles > remplacer tout le contenu > Publier.
+  Sans cela, l'enregistrement d'un nom dans la base est refusé (message « Envoi refusé »).
+  Les noms enregistrés sont en lecture libre, comme les records : n'utiliser que des prénoms ou des pseudos.
+  Pour corriger un nom : console Firebase > Données > roster > players (ou teams) > supprimer l'entrée.
+
+Passage à la V5 (équipes) : republier les règles
+  Les équipes ajoutent un champ « mb » (noms des joueurs) aux records. Avant d'utiliser les équipes,
+  ouvrir Firebase > Realtime Database > Règles, remplacer le contenu par celui du fichier firebase-rules.json
+  de la V5, puis « Publier ». Sans cela, les records d'équipe restent en attente (message « Envoi refusé »),
+  les records des joueurs ne sont pas touchés. Il est conseillé que tous les membres passent à la V5 :
+  une ancienne version afficherait une équipe comme un joueur, sans les noms de ses membres.
+
 Corriger ou supprimer un score
   Depuis l'application, ce n'est pas possible quand la base commune est active (cela évite les suppressions
   accidentelles ou malveillantes). Dans la console Firebase, onglet « Données » : cliquer sur le score concerné
-  (records > jeu > joueur > mesure) puis sur la croix rouge pour le supprimer, ou modifier sa valeur.
+  (records > jeu > joueur > mesure ; les équipes ont un nom qui commence par eq~) puis sur la croix rouge pour le supprimer, ou modifier sa valeur.
   Les téléphones se mettent à jour à la synchronisation suivante (toutes les deux minutes quand l'application
   est ouverte, ou en ouvrant « Meilleurs scores »).
 

@@ -1,6 +1,37 @@
 HISTORIQUE DES VERSIONS - Application Fléchettes PDC
 ====================================================
 
+V7 (octobre 2026)
+  - Recherche par prénom ou par nom d'équipe dans « Meilleurs scores » (insensible aux majuscules et aux accents) ;
+    une recherche sur un prénom propose aussi les équipes dont il est membre.
+  - Fiche d'un joueur : tous ses records, jeu par jeu, avec son rang au club et la date ; en dessous, ses records en équipe.
+  - Fiche d'une équipe : ses records avec les joueurs qui les ont réalisés ; chaque prénom est cliquable.
+  - Tous les noms des podiums et des tableaux sont cliquables et ouvrent la fiche ; bouton « Retour ».
+  - Tout le monde voit les records de chacun (base commune). Aucun changement des règles Firebase.
+  - Vademecum V7.
+
+V6 (octobre 2026)
+  - Joueurs et équipes partagés entre tous les téléphones, dans la base du club (même base que les records).
+  - Avec la base commune, un nom saisi dans un jeu n'est plus mémorisé automatiquement : un bandeau propose
+    « Enregistrer dans la base du club », avec une confirmation et un rappel sur l'orthographe du prénom ou du pseudo.
+  - Même confirmation à l'ajout d'un joueur ou à la création d'une équipe dans « Joueurs et équipes ».
+  - Contour en pointillés = pas encore enregistré dans la base ; bouton « Envoyer au club (n) » pour l'envoyer.
+  - Un joueur ou une équipe enregistré dans la base ne peut plus être retiré ou modifié depuis l'application
+    (correction par la personne qui administre la base, dans la console Firebase).
+  - Sans base commune (config.js vide), le fonctionnement reste celui de la V5.
+  - Règles Firebase : nouvelle section « roster » à republier (voir GUIDE-SYNCHRONISATION.txt).
+  - Vademecum V6.
+
+V5 (octobre 2026)
+  - Équipes : création dans « Joueurs et équipes » (nom + 2 à 4 joueurs de la liste), modification et suppression.
+  - Une équipe se choisit comme un joueur dans le champ nom de tous les jeux (Capital, 501 tableau, 301/501/701, Cricket).
+  - Records par équipe, classés à part des joueurs : podium des équipes et tableau par équipe, avec les noms des joueurs
+    de l'équipe sous chaque score (pour retrouver les meilleures combinaisons).
+  - Texte partagé : une ligne « équipes » avec les noms des joueurs.
+  - Record « équipe » affiché sous le Capital, à côté du record des joueurs.
+  - Base commune : nouveau champ « mb » dans firebase-rules.json. Les règles sont à republier (voir GUIDE-SYNCHRONISATION.txt).
+  - Vademecum V5.
+
 V4 (octobre 2026)
   - Podium du club : les trois meilleurs scores de chaque mesure, une place par personne.
   - Texte partagé : podium 1er / 2e / 3e.
