@@ -5,6 +5,9 @@ Contenu du dossier
   index.html            l'application complète (Capital, 501 tableau, 501/301/701, Cricket)
   manifest.webmanifest  nom, icônes et couleurs de l'application installée
   sw.js                 mode hors connexion
+  config.js             réglage facultatif : adresse de la base commune des scores
+  firebase-rules.json   règles de sécurité à coller dans Firebase
+  GUIDE-SYNCHRONISATION.txt   marche à suivre pour partager les scores entre tous les téléphones
   icons/                icônes de l'application
   fonts/                police Oswald hébergée localement
 
@@ -30,8 +33,9 @@ Meilleurs scores
   (la moyenne compte à partir de 9 fléchettes sur un match terminé).
   Cricket : plus de points dans une partie, victoire la plus rapide (en fléchettes).
   Les joueurs doivent avoir un vrai nom : « Joueur 1 », « Joueur 2 »... ne sont pas enregistrés.
-  Les scores sont stockés sur chaque téléphone. Pour les mettre en commun : bouton Partager (texte),
-  ou Exporter puis Importer sur un autre appareil (les meilleurs scores des deux appareils sont fusionnés).
+  Par défaut, les scores sont stockés sur chaque téléphone (bouton Partager, ou Exporter puis Importer
+  pour les transférer). Avec la base commune du club (GUIDE-SYNCHRONISATION.txt), chaque score qui améliore
+  un record personnel ou le record du club est envoyé à tous les téléphones.
 
 Mise en ligne gratuite avec GitHub Pages
   1. Créer un compte sur github.com, puis un dépôt public (par exemple « flechettes-pdc »).

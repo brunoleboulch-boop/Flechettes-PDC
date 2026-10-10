@@ -1,0 +1,25 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "records": {
+      ".read": true,
+      "$game": {
+        ".validate": "$game === 'capital' || $game === 'x501t' || $game === 'x01-301' || $game === 'x01-501' || $game === 'x01-701' || $game === 'cricket'",
+        "$player": {
+          ".validate": "$player.length > 0 && $player.length <= 40",
+          "$metric": {
+            ".write": "newData.exists() && (!data.exists() || (($metric === 'rounds' || $metric === 'legDarts' || $metric === 'darts') ? newData.child('v').val() < data.child('v').val() : newData.child('v').val() > data.child('v').val()))",
+            ".validate": "newData.hasChildren(['v', 'd', 'name']) && ($metric === 'score' || $metric === 'rounds' || $metric === 'volee' || $metric === 'legDarts' || $metric === 'checkout' || $metric === 'avg' || $metric === 'points' || $metric === 'darts')",
+            "v": {
+              ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= (($metric === 'volee' || $metric === 'avg') ? 180 : ($metric === 'checkout') ? 170 : ($metric === 'rounds') ? 100 : ($metric === 'legDarts' || $metric === 'darts') ? 300 : 5000)"
+            },
+            "d": { ".validate": "newData.isString() && newData.val().length === 10" },
+            "name": { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 40" },
+            "$other": { ".validate": false }
+          }
+        }
+      }
+    }
+  }
+}

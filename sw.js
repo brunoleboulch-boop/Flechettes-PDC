@@ -2,12 +2,13 @@
    Stratégie : on sert immédiatement ce qui est en cache (démarrage instantané, même sans réseau),
    et on met à jour le cache en arrière-plan. Une nouvelle version s'affiche donc au lancement suivant.
    Pour forcer un nettoyage complet après une grosse modification, augmentez CACHE_VERSION. */
-const CACHE_VERSION = 'pdc-v5';
+const CACHE_VERSION = 'pdc-v6';
 
 const PRECACHE = [
   './',
   './index.html',
   './manifest.webmanifest',
+  './config.js',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/icon-maskable-512.png',

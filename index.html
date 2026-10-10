@@ -12,6 +12,7 @@
 <meta name="apple-mobile-web-app-title" content="Fléchettes PDC">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="manifest.webmanifest">
+<script src="config.js"></script>
 <link rel="icon" type="image/png" sizes="48x48" href="icons/favicon-48.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <script>try{var __t=localStorage.getItem('pdc_theme');if(__t)document.documentElement.setAttribute('data-theme',__t);}catch(e){}</script>
@@ -260,11 +261,13 @@
   <div class="card" id="records-panel" style="display:none;max-width:560px;margin:0 auto 16px;">
     <div class="field-label">Meilleurs scores</div>
     <select class="text-field" id="records-game" style="margin:8px 0 4px;"></select>
+    <div class="hint" id="records-sync" style="margin:6px 0 0;text-align:left;"></div>
     <div id="records-body"></div>
-    <p class="hint" style="margin-top:12px;">Les scores sont enregistrés sur cet appareil. Les joueurs nommés « Joueur 1 », « Joueur 2 »… ne sont pas comptabilisés : saisissez un vrai nom.</p>
+    <p class="hint" id="records-note" style="margin-top:12px;">Les scores sont enregistrés sur cet appareil. Les joueurs nommés « Joueur 1 », « Joueur 2 »… ne sont pas comptabilisés : saisissez un vrai nom.</p>
     <div class="util-row wrap" style="margin-top:10px;">
       <button class="tool-btn primary" id="records-share">Partager</button>
       <button class="tool-btn" id="records-copy">Copier le texte</button>
+      <button class="tool-btn" id="records-refresh" style="display:none;">Actualiser</button>
     </div>
     <div class="util-row wrap" style="margin-top:8px;">
       <button class="tool-btn" id="records-export">Exporter (fichier)</button>
@@ -590,7 +593,7 @@
 
     function isGeneric(name) { return !name || /^joueur\s*\d*$/i.test(String(name).trim()); }
     function keyOf(name) {
-      return String(name).trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, ' ');
+      return String(name).trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, ' ').replace(/[.$#\[\]\/]/g, '_').slice(0, 40);
     }
     function better(def, a, b) { return def.better === 'min' ? a < b : a > b; }
     function pad2(n) { return (n < 10 ? '0' : '') + n; }
@@ -629,6 +632,136 @@
       setTimeout(function(){ line.remove(); if (!el.children.length) el.classList.remove('show'); }, 4500);
     }
 
+    // ----- Synchronisation avec la base commune du club (facultative : voir config.js) -----
+    var CFG = window.PDC_CONFIG || {};
+    var DB = String(CFG.databaseURL || '').replace(/\/+$/, '');
+    var ONLINE = /^https:\/\/.+/.test(DB);
+    var PENDING_KEY = 'pdc_pending_v1', SEEDED_KEY = 'pdc_sync_seeded';
+    var status = { state: ONLINE ? 'idle' : 'local', pending: 0, lastSync: null };
+    var statusListeners = [];
+    function setStatus(patch) {
+      for (var k in patch) status[k] = patch[k];
+      statusListeners.forEach(function(f){ try { f(status); } catch(e) {} });
+    }
+    function loadPending() {
+      try { var a = JSON.parse(localStorage.getItem(PENDING_KEY)); return Array.isArray(a) ? a : []; } catch(e) { return []; }
+    }
+    function savePending(a) {
+      try { localStorage.setItem(PENDING_KEY, JSON.stringify(a)); } catch(e) {}
+      setStatus({ pending: a.length });
+    }
+    function addPending(list, g, k, name, m, v, d) {
+      var def = metricDef(g, m); if (!def) return;
+      for (var i = 0; i < list.length; i++) {
+        var p = list[i];
+        if (p.g === g && p.k === k && p.m === m) { if (better(def, v, p.v)) { p.v = v; p.d = d; p.n = name; } return; }
+      }
+      list.push({ g: g, k: k, n: name, m: m, v: v, d: d });
+    }
+    var current = null, queued = null, syncTimer = null, deniedRetries = 0;
+    function scheduleSync(ms) { if (!ONLINE) return; clearTimeout(syncTimer); syncTimer = setTimeout(sync, ms || 0); }
+    function queuePending(g, k, name, m, v, d) {
+      if (!ONLINE) return;
+      var list = loadPending(); addPending(list, g, k, name, m, v, d); savePending(list);
+      scheduleSync(1500);
+    }
+    function request(method, path, body) {
+      var ctrl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+      var timer = ctrl ? setTimeout(function(){ ctrl.abort(); }, 9000) : null;
+      var opts = { method: method };
+      if (ctrl) opts.signal = ctrl.signal;
+      if (body !== undefined) opts.body = JSON.stringify(body);
+      return fetch(DB + path, opts).then(function(r){ if (timer) clearTimeout(timer); return r; },
+                                          function(e){ if (timer) clearTimeout(timer); throw e; });
+    }
+    function mergeInto(data, g, k, name, m, v, d) {
+      var def = metricDef(g, m); if (!def) return;
+      var gg = data[g] || (data[g] = { players: {} });
+      var pl = gg.players[k] || (gg.players[k] = { name: name, best: {} });
+      var cur = pl.best[m];
+      if (!cur || better(def, v, cur.v)) pl.best[m] = { v: v, d: d };
+    }
+    function fromRemote(remote) {
+      var data = {};
+      if (!remote || typeof remote !== 'object') return data;
+      Object.keys(GAMES).forEach(function(gk){
+        var rg = remote[gk]; if (!rg || typeof rg !== 'object') return;
+        Object.keys(rg).forEach(function(pk){
+          var rp = rg[pk]; if (!rp || typeof rp !== 'object') return;
+          var latest = '';
+          GAMES[gk].metrics.forEach(function(def){
+            var e = rp[def.id];
+            if (!e || typeof e.v !== 'number' || !isFinite(e.v) || e.v <= 0) return;
+            var g = data[gk] || (data[gk] = { players: {} });
+            var pl = g.players[pk] || (g.players[pk] = { name: String(e.name || pk), best: {} });
+            pl.best[def.id] = { v: e.v, d: typeof e.d === 'string' ? e.d : '' };
+            if (e.name && String(e.d || '') >= latest) { pl.name = String(e.name); latest = String(e.d || ''); }
+          });
+        });
+      });
+      return data;
+    }
+    function pushOne(p) {
+      var path = '/records/' + encodeURIComponent(p.g) + '/' + encodeURIComponent(p.k) + '/' + encodeURIComponent(p.m) + '.json?print=silent';
+      return request('PUT', path, { v: p.v, d: p.d, name: String(p.n).slice(0, 40) });
+    }
+    function sync() {
+      if (!ONLINE) return Promise.resolve();
+      if (current) {
+        if (!queued) queued = current.then(function(){ queued = null; return sync(); });
+        return queued;
+      }
+      current = doSync().then(function(){ current = null; });
+      return current;
+    }
+    function doSync() {
+      setStatus({ state: 'syncing' });
+      var denied = 0;
+      return request('GET', '/records.json').then(function(r){
+        if (!r.ok) throw new Error('lecture ' + r.status);
+        return r.json();
+      }).then(function(remote){
+        var data = fromRemote(remote);
+        var pending = loadPending();
+        // Première synchronisation : les scores déjà enregistrés sur cet appareil sont envoyés au club.
+        if (!localStorage.getItem(SEEDED_KEY)) {
+          var local = load();
+          Object.keys(local).forEach(function(gk){
+            var lg = local[gk]; if (!GAMES[gk] || !lg || !lg.players) return;
+            Object.keys(lg.players).forEach(function(k){
+              var lp = lg.players[k]; if (!lp || !lp.best) return;
+              GAMES[gk].metrics.forEach(function(def){
+                var b = lp.best[def.id];
+                if (b && typeof b.v === 'number' && b.v > 0) addPending(pending, gk, k, lp.name, def.id, b.v, b.d || today());
+              });
+            });
+          });
+          try { localStorage.setItem(SEEDED_KEY, '1'); } catch(e) {}
+        }
+        // On ne garde à envoyer que ce qui améliore la base du club.
+        var toPush = pending.filter(function(p){
+          var def = metricDef(p.g, p.m); if (!def) return false;
+          var cur = data[p.g] && data[p.g].players[p.k] && data[p.g].players[p.k].best[p.m];
+          return !cur || better(def, p.v, cur.v);
+        });
+        toPush.forEach(function(p){ mergeInto(data, p.g, p.k, p.n, p.m, p.v, p.d); });
+        save(data); savePending(toPush); changed();
+        var chain = Promise.resolve(), still = [];
+        toPush.forEach(function(p){
+          chain = chain.then(function(){ return pushOne(p); }).then(function(r){
+            if (!r.ok) { if (r.status === 401 || r.status === 403) { denied++; still.push(p); return; } throw new Error('écriture ' + r.status); }
+          });
+        });
+        return chain.then(function(){ savePending(still); });
+      }).then(function(){
+        setStatus({ state: denied ? 'denied' : 'ok', lastSync: new Date() });
+        if (denied && deniedRetries < 3) { deniedRetries++; scheduleSync(4000); }
+        if (!denied) deniedRetries = 0;
+      }).catch(function(){
+        setStatus({ state: 'offline', pending: loadPending().length });
+      });
+    }
+
     // ----- Enregistrement d'un résultat -----
     function submit(gameKey, name, metrics, opts) {
       opts = opts || {};
@@ -650,6 +783,7 @@
         var cur = pl.best[def.id];
         if (!cur || better(def, v, cur.v)) {
           pl.best[def.id] = { v: v, d: today() };
+          queuePending(gameKey, k, pl.name, def.id, v, pl.best[def.id].d);
           touched = true;
           var text = pl.name + ' : ' + fmt(def, v) + (def.unit || '') + ' — ' + def.label + ' (' + game.label + ')';
           if (clubBefore && better(def, v, clubBefore.v)) messages.push('🏆 Record du club battu ! ' + text);
@@ -682,7 +816,7 @@
       h += '<div class="rec-title" style="font-size:0.95rem;">Meilleurs scores personnels</div>';
       h += '<div class="table-scroll"><table class="rec-table"><thead><tr><th>Joueur</th>';
       game.metrics.forEach(function(m){ h += '<th>' + esc(m.short) + '</th>'; });
-      h += '<th></th></tr></thead><tbody>';
+      h += (ONLINE ? '' : '<th></th>') + '</tr></thead><tbody>';
       keys.sort(function(a, b){ return g.players[a].name.localeCompare(g.players[b].name, 'fr', { sensitivity: 'base' }); });
       keys.forEach(function(k){
         var pl = g.players[k];
@@ -691,7 +825,7 @@
           var b = pl.best && pl.best[m.id];
           h += b ? '<td class="v">' + esc(fmt(m, b.v)) + '</td>' : '<td>—</td>';
         });
-        h += '<td><button class="rec-del" title="Supprimer ce joueur de ce jeu" data-game="' + esc(key) + '" data-player="' + esc(k) + '">✕</button></td></tr>';
+        h += (ONLINE ? '' : '<td><button class="rec-del" title="Supprimer ce joueur de ce jeu" data-game="' + esc(key) + '" data-player="' + esc(k) + '">✕</button></td>') + '</tr>';
       });
       return h + '</tbody></table></div>';
     }
@@ -740,7 +874,7 @@
             var b = sp.best && sp.best[def.id];
             if (!b || typeof b.v !== 'number' || !isFinite(b.v) || b.v <= 0) return;
             var cur = pl.best[def.id];
-            if (!cur || better(def, b.v, cur.v)) { pl.best[def.id] = { v: b.v, d: /^\d{4}-\d{2}-\d{2}$/.test(b.d || '') ? b.d : today() }; changes++; }
+            if (!cur || better(def, b.v, cur.v)) { pl.best[def.id] = { v: b.v, d: /^\d{4}-\d{2}-\d{2}$/.test(b.d || '') ? b.d : today() }; changes++; queuePending(gk, key, pl.name, def.id, b.v, pl.best[def.id].d); }
           });
         });
       });
@@ -748,15 +882,18 @@
       return changes;
     }
     function removePlayer(gameKey, playerKey) {
+      if (ONLINE) { toast('Suppression réservée à la personne qui administre la base du club'); return; }
       var data = load();
       if (data[gameKey] && data[gameKey].players) { delete data[gameKey].players[playerKey]; save(data); changed(); }
     }
-    function resetAll() { try { localStorage.removeItem(KEY); localStorage.removeItem('pdc_capital_record'); } catch(e) {} changed(); }
+    function resetAll() { if (ONLINE) { toast('Suppression réservée à la personne qui administre la base du club'); return; } try { localStorage.removeItem(KEY); localStorage.removeItem('pdc_capital_record'); } catch(e) {} changed(); }
 
     return {
       submit: submit, clubBest: clubBest, format: format, render: render, shareText: shareText, toast: toast,
       exportJSON: exportJSON, importMerge: importMerge, removePlayer: removePlayer, resetAll: resetAll,
       onChange: function(f){ listeners.push(f); },
+      sync: sync, isOnline: function(){ return ONLINE; }, status: function(){ return status; },
+      onStatus: function(f){ statusListeners.push(f); },
       list: function(){ return ORDER.map(function(k){ return { key: k, label: GAMES[k].label }; }); }
     };
   })();
@@ -775,6 +912,35 @@
     Records.onChange(refresh);
     sel.addEventListener('change', refresh);
 
+    // --- État de la synchronisation ---
+    var syncEl = document.getElementById('records-sync');
+    function statusText(st) {
+      if (st.state === 'local') return 'Mode local : les scores restent sur cet appareil.';
+      var t;
+      if (st.state === 'syncing') t = 'Synchronisation avec la base du club…';
+      else if (st.state === 'offline') t = 'Hors connexion : les nouveaux scores seront envoyés au retour du réseau.';
+      else if (st.state === 'denied') t = 'Envoi refusé par la base du club : vérifier ses règles de sécurité.';
+      else if (st.state === 'ok') {
+        var d = st.lastSync;
+        t = 'Synchronisé avec la base du club' + (d ? ' à ' + ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2) : '') + '.';
+      } else t = 'Base du club : en attente de synchronisation.';
+      if (st.pending) t += ' ' + st.pending + ' score(s) en attente d\'envoi.';
+      return t;
+    }
+    function showStatus() { syncEl.textContent = statusText(Records.status()); }
+    Records.onStatus(showStatus);
+    showStatus();
+    if (Records.isOnline()) {
+      document.getElementById('records-reset').style.display = 'none';
+      document.getElementById('records-refresh').style.display = '';
+      document.getElementById('records-note').textContent = 'Les scores sont partagés avec tous les téléphones du club. Les joueurs nommés « Joueur 1 », « Joueur 2 »… ne sont pas comptabilisés : saisissez un vrai nom. Pour corriger ou supprimer un score, il faut passer par la personne qui administre la base.';
+      document.getElementById('records-refresh').addEventListener('click', function(){ Records.sync(); });
+      Records.sync();
+      document.addEventListener('visibilitychange', function(){ if (document.visibilityState === 'visible') Records.sync(); });
+      window.addEventListener('online', function(){ Records.sync(); });
+      setInterval(function(){ if (document.visibilityState === 'visible') Records.sync(); }, 120000);
+    }
+
     function defaultScope() {
       var tab = document.querySelector('.game-tab.active'); var mode = tab ? tab.dataset.mode : '';
       if (mode === 'capital') return 'capital';
@@ -786,7 +952,7 @@
     document.getElementById('records-toggle').addEventListener('click', function(){
       var open = panel.style.display === 'none';
       panel.style.display = open ? 'block' : 'none';
-      if (open) { sel.value = defaultScope(); Records.render(body, sel.value); }
+      if (open) { sel.value = defaultScope(); Records.render(body, sel.value); if (Records.isOnline()) Records.sync(); }
     });
 
     body.addEventListener('click', function(e){

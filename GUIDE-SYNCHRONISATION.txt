@@ -1,0 +1,61 @@
+PARTAGER LES MEILLEURS SCORES ENTRE TOUS LES TELEPHONES DU CLUB
+===============================================================
+
+Principe
+  Chaque score est comparé au record personnel du joueur ou de la joueuse et au record du club.
+  S'il améliore l'un des deux, il est enregistré dans une base commune hébergée par Firebase (Google),
+  et tous les téléphones le voient à leur prochaine synchronisation. Un score moins bon n'est jamais envoyé.
+  Sans réseau, l'application fonctionne normalement : les nouveaux records attendent et sont envoyés
+  dès que le téléphone retrouve du réseau.
+  Les parties en cours, elles, restent sur chaque téléphone.
+
+Mise en place (environ 10 minutes, gratuit, sans carte bancaire)
+
+  1. Créer le projet
+     - Aller sur https://console.firebase.google.com avec un compte Google.
+     - « Créer un projet » (Add project), nom : flechettes-pdc.
+     - Désactiver Google Analytics, puis « Créer le projet ».
+
+  2. Créer la base de données
+     - Menu de gauche : Build (Créer) > Realtime Database > « Créer une base de données ».
+     - Emplacement : Belgique (europe-west1).
+     - Mode de sécurité : mode verrouillé (locked mode), puis Activer.
+
+  3. Publier les règles de sécurité
+     - Onglet « Règles » (Rules) de la base.
+     - Effacer tout le contenu et coller celui du fichier firebase-rules.json (dans ce dossier).
+     - Cliquer sur « Publier ». Ces règles n'autorisent que les améliorations de scores plausibles
+       et interdisent toute suppression depuis l'application.
+
+  4. Copier l'adresse de la base
+     - Onglet « Données » (Data) : l'adresse est affichée en haut, de la forme
+       https://flechettes-pdc-default-rtdb.europe-west1.firebasedatabase.app
+
+  5. La renseigner dans l'application
+     - Sur GitHub, dans le dépôt, ouvrir le fichier config.js, cliquer sur le crayon (Edit).
+     - Coller l'adresse entre les guillemets de databaseURL, puis « Commit changes ».
+     - Pour que le changement soit pris en compte, fermer complètement l'application sur chaque téléphone
+       et la rouvrir deux fois (avec du réseau).
+
+  6. Vérifier
+     - Ouvrir « Meilleurs scores » : le message doit indiquer « Synchronisé avec la base du club ».
+     - Sur un second téléphone, constater que les scores du premier apparaissent.
+     - Si le message indique « Envoi refusé », les règles de l'étape 3 ne sont pas publiées correctement.
+
+Corriger ou supprimer un score
+  Depuis l'application, ce n'est pas possible quand la base commune est active (cela évite les suppressions
+  accidentelles ou malveillantes). Dans la console Firebase, onglet « Données » : cliquer sur le score concerné
+  (records > jeu > joueur > mesure) puis sur la croix rouge pour le supprimer, ou modifier sa valeur.
+  Les téléphones se mettent à jour à la synchronisation suivante (toutes les deux minutes quand l'application
+  est ouverte, ou en ouvrant « Meilleurs scores »).
+
+Ce qui est stocké, et sécurité
+  - Noms (ou pseudos) et meilleurs scores uniquement, sur des serveurs Google situés en Europe.
+    Il est recommandé d'en informer les membres du club.
+  - La base est lisible par toute personne qui connaît son adresse (visible dans config.js du dépôt public).
+    L'écriture est limitée aux améliorations de scores plausibles, mais une personne mal intentionnée pourrait
+    inscrire un faux record plausible : l'administration le corrige alors dans la console.
+  - Le service gratuit (formule Spark) offre largement la capacité nécessaire à un club.
+
+Revenir au mode local
+  Vider l'adresse databaseURL dans config.js : les scores restent alors uniquement sur chaque téléphone.
