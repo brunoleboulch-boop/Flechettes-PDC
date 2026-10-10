@@ -1,0 +1,17 @@
+{
+  "name": "Fléchettes — Club de Pornic",
+  "short_name": "Fléchettes PDC",
+  "description": "Marquage de fléchettes du club Pornic Darts Compétition : Capital, 501, 301, 701 et Cricket.",
+  "lang": "fr",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f4f1ea",
+  "theme_color": "#f4f1ea",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

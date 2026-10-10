@@ -1,0 +1,56 @@
+FLECHETTES PDC - APPLICATION INSTALLABLE (PWA)
+==============================================
+
+Contenu du dossier
+  index.html            l'application complète (Capital, 501 tableau, 501/301/701, Cricket)
+  manifest.webmanifest  nom, icônes et couleurs de l'application installée
+  sw.js                 mode hors connexion
+  icons/                icônes de l'application
+  fonts/                police Oswald hébergée localement
+
+Ce qui a changé par rapport à votre fichier d'origine
+  - Installation sur l'écran d'accueil (Android et iPhone), plein écran, sans barre de navigateur.
+  - Fonctionnement hors connexion (utile en salle).
+  - Police Oswald intégrée (elle ne dépend plus de Google Fonts).
+  - La partie en cours est conservée si l'application est fermée ou rechargée
+    (Capital, 501 tableau, 501/301/701 et Cricket).
+  - Le thème choisi et le dernier onglet utilisé sont mémorisés.
+  - Bouton « Meilleurs scores » : record du club et records personnels dans chaque jeu.
+  - Partage des scores : texte à envoyer par message, fichier exportable/importable.
+  - Les noms des joueurs restent toujours visibles : ligne des noms fixe dans Capital et 501 (tableau),
+    tableau collé en haut dans le Cricket, joueurs côte à côte dans 501/301/701 clavier.
+  - Capital : les deux lignes « 19 » sont distinguées (« 19 (maximum) » et « 19 (moins de 20) »).
+  - Cricket : le bouton « Annuler » retire maintenant aussi les marques et les points.
+  - 501/301/701 clavier : un tour « anti-jeu » ne compte plus dans la moyenne.
+
+Meilleurs scores
+  Capital : meilleur score.
+  501 (tableau) : partie la plus courte (en volées) et plus haute volée.
+  301 / 501 / 701 (clavier) : manche la plus courte, plus haute volée, plus gros checkout, meilleure moyenne
+  (la moyenne compte à partir de 9 fléchettes sur un match terminé).
+  Cricket : plus de points dans une partie, victoire la plus rapide (en fléchettes).
+  Les joueurs doivent avoir un vrai nom : « Joueur 1 », « Joueur 2 »... ne sont pas enregistrés.
+  Les scores sont stockés sur chaque téléphone. Pour les mettre en commun : bouton Partager (texte),
+  ou Exporter puis Importer sur un autre appareil (les meilleurs scores des deux appareils sont fusionnés).
+
+Mise en ligne gratuite avec GitHub Pages
+  1. Créer un compte sur github.com, puis un dépôt public (par exemple « flechettes-pdc »).
+  2. Y déposer tout le contenu de ce dossier (Add file > Upload files), à la racine du dépôt.
+  3. Settings > Pages > Source : « Deploy from a branch », branche « main », dossier « / (root) ».
+  4. Après une minute, l'adresse est : https://VOTRE-COMPTE.github.io/flechettes-pdc/
+  5. Générer un QR code de cette adresse et l'afficher au club.
+
+Installation par les joueurs
+  Android (Chrome) : menu ⋮ > « Installer l'application » (ou « Ajouter à l'écran d'accueil »).
+  iPhone (Safari)  : bouton Partager > « Sur l'écran d'accueil ».
+  Il faut ouvrir l'adresse une première fois avec du réseau ; ensuite l'application fonctionne sans connexion.
+
+Faire évoluer l'application
+  Modifier index.html et le remplacer dans le dépôt. Les modifications apparaissent chez les joueurs
+  au deuxième lancement suivant (le premier lancement récupère la nouvelle version en arrière-plan).
+  Si vous ajoutez de nouveaux fichiers (images, polices...), les ajouter aussi à la liste PRECACHE de sw.js
+  et changer CACHE_VERSION (par exemple pdc-v2).
+
+Remarque
+  L'hébergement doit être en https (c'est le cas de GitHub Pages). Un simple double-clic sur index.html
+  fonctionne pour jouer, mais l'installation et le mode hors connexion n'y sont pas disponibles.
