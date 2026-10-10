@@ -5,5 +5,5 @@
    databaseURL: 'https://flechettes-pdc-default-rtdb.europe-west1.firebasedatabase.app'
 */
 window.PDC_CONFIG = {
-  databaseURL: 'https://pornic-darts-competition-default-rtdb.europe-west1.firebasedatabase.app/'
+  databaseURL: 'https://pornic-darts-competition-default-rtdb.europe-west1.firebasedatabase.app'
 };

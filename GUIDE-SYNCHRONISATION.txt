@@ -23,7 +23,8 @@ Mise en place (environ 10 minutes, gratuit, sans carte bancaire)
 
   3. Publier les règles de sécurité
      - Onglet « Règles » (Rules) de la base.
-     - Effacer tout le contenu et coller celui du fichier firebase-rules.json (dans ce dossier).
+     - Effacer tout le contenu et coller celui du fichier firebase-rules.json (dans ce dossier),
+       en entier : de la toute première accolade { jusqu'à la dernière }.
      - Cliquer sur « Publier ». Ces règles n'autorisent que les améliorations de scores plausibles
        et interdisent toute suppression depuis l'application.
 

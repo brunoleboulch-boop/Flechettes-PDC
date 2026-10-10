@@ -1,0 +1,23 @@
+HISTORIQUE DES VERSIONS - Application Fléchettes PDC
+====================================================
+
+V4 (octobre 2026)
+  - Podium du club : les trois meilleurs scores de chaque mesure, une place par personne.
+  - Texte partagé : podium 1er / 2e / 3e.
+  - Numéro de version affiché sous le titre de l'application.
+  - config.js livré avec l'adresse de la base du club.
+  - Vademecum V4.
+
+V3 (octobre 2026)
+  - Vademecum mis à jour pour les scores partagés entre tous les téléphones (application inchangée).
+
+V2 (octobre 2026)
+  - Scores communs à tous les téléphones : base Firebase, comparaison aux records puis envoi des améliorations,
+    file d'attente hors connexion, état de synchronisation.
+  - Fichiers config.js, firebase-rules.json et GUIDE-SYNCHRONISATION.txt.
+
+V1 (octobre 2026)
+  - Application installable (PWA), fonctionnement hors connexion, reprise de la partie en cours.
+  - Meilleurs scores sur chaque téléphone (personnels et record du club), partage par texte, export / import.
+  - Noms des joueurs toujours visibles ; deux lignes « 19 » distinguées au Capital ; correctif de l'annulation au Cricket.
+  - Nouveau logo, icônes, QR code, vademecum.
