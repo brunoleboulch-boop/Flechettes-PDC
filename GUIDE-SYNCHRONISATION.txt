@@ -43,6 +43,17 @@ Mise en place (environ 10 minutes, gratuit, sans carte bancaire)
      - Sur un second téléphone, constater que les scores du premier apparaissent.
      - Si le message indique « Envoi refusé », les règles de l'étape 3 ne sont pas publiées correctement.
 
+Passage à la V10 (tournoi partagé entre plusieurs téléphones) : republier les règles
+  Le fichier firebase-rules.json de la V10 contient une nouvelle section « tournoi ».
+  Même marche à suivre que pour les versions précédentes : Realtime Database > Règles > remplacer tout le contenu
+  par celui du fichier > Publier. À faire une seule fois, AVANT d'utiliser le partage.
+  Sans cela, le tournoi fonctionne quand même sur le téléphone qui l'organise, mais l'application affiche
+  « Envoi refusé : republiez les règles Firebase » et les autres téléphones ne peuvent pas le rejoindre.
+  Dès que les règles sont publiées, l'envoi reprend tout seul (au bout de quelques secondes).
+  Ce qui est stocké : le nom du tournoi, les poules, les résultats des matchs et la réservation des cibles.
+  Ces données sont lisibles par toute personne qui connaît l'adresse de la base, comme les records.
+  Pour nettoyer : console Firebase > Données > tournoi > supprimer le nœud (le tournoi suivant le recrée).
+
 Passage à la V6 (joueurs et équipes partagés) : republier les règles
   Le fichier firebase-rules.json de la V6 contient une section « roster » (liste des joueurs et des équipes).
   Même marche à suivre que ci-dessous : Realtime Database > Règles > remplacer tout le contenu > Publier.

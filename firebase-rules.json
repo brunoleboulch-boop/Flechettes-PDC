@@ -59,6 +59,92 @@
           }
         }
       }
+    },
+    "tournoi": {
+      ".read": true,
+      ".write": true,
+      "cfg": {
+        "j": {
+          ".validate": "newData.isString() && newData.val().length <= 12000"
+        },
+        "$other": {
+          ".validate": false
+        }
+      },
+      "ko": {
+        "j": {
+          ".validate": "newData.isString() && newData.val().length <= 4000"
+        },
+        "$other": {
+          ".validate": false
+        }
+      },
+      "con": {
+        "j": {
+          ".validate": "newData.isString() && newData.val().length <= 4000"
+        },
+        "$other": {
+          ".validate": false
+        }
+      },
+      "closed": {
+        ".validate": "newData.isString() && newData.val().length <= 30"
+      },
+      "res": {
+        "$id": {
+          ".validate": "$id.length > 0 && $id.length <= 16 && newData.hasChildren(['a', 'b', 'la', 'lb', 'win', 'lose'])",
+          "a": {
+            ".validate": "newData.isString() && newData.val().length <= 20"
+          },
+          "b": {
+            ".validate": "newData.isString() && newData.val().length <= 20"
+          },
+          "win": {
+            ".validate": "newData.isString() && newData.val().length <= 20"
+          },
+          "lose": {
+            ".validate": "newData.isString() && newData.val().length <= 20"
+          },
+          "la": {
+            ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 9"
+          },
+          "lb": {
+            ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 9"
+          },
+          "av": {
+            ".validate": "newData.isString() && newData.val().length <= 24"
+          },
+          "src": {
+            ".validate": "newData.isString() && newData.val().length <= 8"
+          },
+          "$other": {
+            ".validate": false
+          }
+        }
+      },
+      "live": {
+        "$id": {
+          ".validate": "$id.length > 0 && $id.length <= 16 && newData.hasChildren(['by', 't'])",
+          "by": {
+            ".validate": "newData.isString() && newData.val().length <= 16"
+          },
+          "t": {
+            ".validate": "newData.isNumber()"
+          },
+          "a": {
+            ".validate": "newData.isString() && newData.val().length <= 20"
+          },
+          "b": {
+            ".validate": "newData.isString() && newData.val().length <= 20"
+          },
+          "$other": {
+            ".validate": false
+          }
+        }
+      },
+      "$other": {
+        ".validate": false
+      }
     }
   }
 }

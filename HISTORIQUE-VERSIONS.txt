@@ -1,6 +1,46 @@
 HISTORIQUE DES VERSIONS - Application Fléchettes PDC
 ====================================================
 
+V10 (octobre 2026)
+  - Tournoi partagé entre plusieurs téléphones (une cible par téléphone) : le premier téléphone crée le tournoi
+    et laisse « Partager avec les autres téléphones » activé ; les autres le rejoignent depuis « Compétition ».
+  - Chaque téléphone joue ou saisit ses matchs ; résultats, tableau final et consolante sont partagés (mise à jour
+    toutes les 4 secondes environ).
+  - Réservation des cibles : un match en cours sur un téléphone est signalé « en cours sur une autre cible » sur les
+    autres, et un joueur déjà en match ailleurs ne peut pas être lancé sur une deuxième cible. Bouton « Libérer le
+    match » si un téléphone tombe en panne.
+  - Hors connexion, le tournoi continue sur le téléphone ; les résultats sont envoyés au retour du réseau.
+  - Règles Firebase : nouvelle section « tournoi » à republier (voir GUIDE-SYNCHRONISATION.txt). Sans cela, message
+    « Envoi refusé » et le tournoi reste local.
+  - Sans base commune (config.js vide), le tournoi fonctionne comme en V9, sur un seul téléphone.
+
+V9 (octobre 2026)
+  - Compétition : réglage séparé des demi-finales, et format « au meilleur de 9 manches » disponible
+    (poules, tableau jusqu'aux quarts, demi-finales, finale : quatre réglages indépendants).
+  - Bouton « Appliquer les réglages de l'Open National FFD » : 501, sortie sur double, poules en 3 manches,
+    tableau en 5, demi-finales et finale en 7 (à passer à 9 pour le masculin). Tout reste modifiable.
+  - Avant chaque match : bouton « Tirer à pile ou face » pour désigner le lanceur de la première manche.
+  - Manche décisive (1 partout au meilleur de 3, 2 partout au meilleur de 5, etc.) : tirage à la bulle.
+    Le joueur le plus près du centre commence ; la saisie reste bloquée tant qu'il n'est pas désigné.
+  - Les tournois commencés en V8 restent utilisables (les demi-finales reprennent alors le format du tableau).
+
+V8 (octobre 2026)
+  - Page d'accueil : choix entre « Entraînement » (tout ce qui existait, inchangé) et « Compétition ».
+  - Compétition : tournoi en poules, puis tableau final (huitièmes, quarts, demi-finales, finale selon le nombre
+    de joueurs) et consolante facultative pour les éliminés. De 3 à 32 joueurs.
+  - Poules équilibrées de 3 ou 4 joueurs (à 5 joueurs : une poule unique), réparties en serpentin selon la meilleure
+    moyenne connue au club, ou par tirage au sort. Le nombre de poules se choisit quand plusieurs répartitions existent.
+  - Poule de 4 : deux matchs au premier tour, match des vainqueurs (le gagnant est qualifié), match des perdants
+    (le perdant est éliminé), puis barrage entre les deux autres. Chacun joue 2 ou 3 matchs.
+    Poule de 3 : chacun rencontre les deux autres. Deux qualifiés par poule.
+  - Chaque match se joue dans l'application (écran 501 clavier, avec alternance du lanceur à chaque manche)
+    ou se saisit à la main (gagnant et score en manches). Un résultat se corrige tant que le match suivant n'est pas joué.
+  - Formats réglables séparément : poules, tableau final, finale (manche sèche ou meilleur de 3, 5, 7).
+  - Les moyennes, volées et checkouts réalisés en compétition alimentent les meilleurs scores comme en entraînement.
+  - Tournoi et match en cours conservés si l'application est fermée ; récapitulatif à copier pour un message.
+  - Réouverture dans les 2 heures : retour direct là où l'on était ; au-delà, page d'accueil.
+  - Aucun changement des règles Firebase. Le tournoi est conservé sur le téléphone qui l'organise.
+
 V7 (octobre 2026)
   - Recherche par prénom ou par nom d'équipe dans « Meilleurs scores » (insensible aux majuscules et aux accents) ;
     une recherche sur un prénom propose aussi les équipes dont il est membre.

@@ -2,11 +2,11 @@ FLECHETTES PDC - APPLICATION INSTALLABLE (PWA)
 ==============================================
 
 Contenu du dossier
-  index.html            l'application complète (Capital, 501 tableau, 501/301/701, Cricket)
+  index.html            l'application complète (Capital, 501 tableau, 501/301/701, Cricket, mode Compétition)
   manifest.webmanifest  nom, icônes et couleurs de l'application installée
   sw.js                 mode hors connexion
   config.js             adresse de la base commune des scores (déjà renseignée pour le club)
-  firebase-rules.json   règles de sécurité à coller dans Firebase
+  firebase-rules.json   règles de sécurité à coller dans Firebase (à republier à chaque nouvelle version qui le demande)
   GUIDE-SYNCHRONISATION.txt   marche à suivre pour partager les scores entre tous les téléphones
   icons/                icônes de l'application
   fonts/                police Oswald hébergée localement
@@ -37,6 +37,45 @@ Joueurs partagés entre les téléphones (avec la base du club)
   (ou l'ajouter dans « Joueurs et équipes »). Une confirmation rappelle de vérifier l'orthographe : le nom sera
   visible par tous et seule la personne qui administre la base pourra le corriger ou le supprimer.
   Sans base commune, les noms restent sur chaque téléphone et sont mémorisés automatiquement.
+
+Page d'accueil : Entraînement ou Compétition
+  Au lancement, l'accueil propose deux entrées. « Entraînement » ouvre les jeux habituels, sans changement.
+  « Compétition » ouvre le tournoi. Si l'application est rouverte dans les 2 heures, elle revient directement
+  là où on l'avait laissée (partie ou tournoi en cours) ; au-delà, elle s'ouvre sur l'accueil.
+
+Compétition (tournoi)
+  1. Choisir le jeu (501 par défaut), la sortie sur double, le format des matchs (poules, tableau jusqu'aux quarts,
+     demi-finales, finale : de la manche sèche au meilleur de 9) et la consolante. Le bouton « Appliquer les réglages
+     de l'Open National FFD » règle tout d'un coup (poules en 3 manches, tableau en 5, demi-finales et finale en 7). Saisir les joueurs (de 3 à 32) ou toucher les joueurs habituels pour les ajouter.
+  2. « Composer les poules » : les poules sont équilibrées (3 ou 4 joueurs ; à 5 joueurs, une poule unique).
+     La répartition suit les meilleures moyennes connues au club, ou le tirage au sort. « Refaire le tirage » est possible.
+  3. Poule de 4 : deux matchs au premier tour ; les vainqueurs se rencontrent (le gagnant est qualifié) ; les perdants
+     se rencontrent (le perdant est éliminé) ; les deux autres jouent un barrage. Chacun joue donc 2 ou 3 matchs.
+     Poule de 3 : chacun rencontre les deux autres (égalité : confrontation directe, puis différence de manches).
+     Deux qualifiés par poule.
+  4. Chaque match : « Jouer » ou « Saisir le résultat » (gagnant et manches du perdant) pour un match joué ailleurs.
+     Avant « Jouer », on désigne le lanceur (bouton « Tirer à pile ou face »). Le lanceur change ensuite à chaque
+     manche ; la manche décisive se joue à la bulle : on désigne le joueur le plus près du centre, qui commence. Un résultat se corrige tant que le match suivant
+     n'est pas joué.
+  5. Poules terminées : « Lancer le tableau final ». Les qualifiés sont placés pour que deux joueurs d'une même poule
+     ne se rencontrent pas au premier tour ; s'il manque des joueurs pour remplir le tableau, les mieux classés
+     sont qualifiés d'office. Les éliminés des poules jouent la consolante (onglet « Consolante »).
+  6. « Copier le récapitulatif » donne un texte à coller dans un message. « Nouveau tournoi » efface le tournoi.
+  Les moyennes, volées et checkouts réalisés dans les matchs joués dans l'application comptent pour les meilleurs scores.
+
+Plusieurs cibles, plusieurs téléphones (avec la base du club)
+  1. Avant la première utilisation : republier les règles Firebase (GUIDE-SYNCHRONISATION.txt, « Passage à la V10 »).
+  2. Sur le premier téléphone : créer le tournoi comme d'habitude ; à l'aperçu des poules, laisser activé
+     « Partager avec les autres téléphones », puis « Lancer le tournoi ».
+  3. Sur chaque autre téléphone : ouvrir « Compétition » ; l'encart « Un tournoi est en cours sur un autre téléphone »
+     apparaît : « Rejoindre ce tournoi ».
+  4. Chaque cible joue son match (« Jouer ») ou saisit un résultat. Un match en cours sur une cible est marqué
+     « en cours sur une autre cible » sur les autres téléphones, et un joueur déjà en match ailleurs n'est pas proposé.
+  5. Tous les téléphones voient les résultats au bout de quelques secondes. Le tableau final peut être lancé
+     depuis n'importe quel téléphone quand toutes les poules sont terminées.
+  6. Si un téléphone tombe en panne pendant un match : « Libérer le match » depuis un autre téléphone, puis rejouer
+     ou saisir le résultat. « Nouveau tournoi » clôture le tournoi pour tous les téléphones.
+  Sans base commune, ou si le réseau tombe, le tournoi continue sur le téléphone qui l'organise.
 
 Équipes
   Bouton « Joueurs et équipes » : donner un nom à l'équipe, toucher ses joueurs (2 à 4), « Créer l'équipe ».
@@ -69,6 +108,8 @@ Installation par les joueurs
   Il faut ouvrir l'adresse une première fois avec du réseau ; ensuite l'application fonctionne sans connexion.
 
 Faire évoluer l'application
+  Pour passer à une nouvelle version, remplacer dans le dépôt les fichiers du zip (index.html, sw.js, etc.).
+  Les dossiers icons/ et fonts/ ne changent pas : ne pas les supprimer.
   Modifier index.html et le remplacer dans le dépôt. Les modifications apparaissent chez les joueurs
   au deuxième lancement suivant (le premier lancement récupère la nouvelle version en arrière-plan).
   Si vous ajoutez de nouveaux fichiers (images, polices...), les ajouter aussi à la liste PRECACHE de sw.js
