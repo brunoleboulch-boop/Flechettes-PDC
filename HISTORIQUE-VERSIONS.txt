@@ -1,6 +1,46 @@
 HISTORIQUE DES VERSIONS - Application Fléchettes PDC
 ====================================================
 
+V12 (octobre 2026)
+  - Poules : à égalité de victoires, le classement regarde d'abord le nombre de manches gagnées, puis la
+    confrontation directe (à deux), la différence de manches et la moyenne.
+  - Meilleurs scores du tournoi gardés dans un classement séparé de l'entraînement : « Tournoi 301 », « Tournoi 501 »,
+    « Tournoi 701 » (plus haute volée, plus gros checkout, meilleure moyenne), avec podium du club et fiche joueur.
+    Les records déjà enregistrés en entraînement, y compris ceux des anciens tournois, ne changent pas.
+  - Têtes de série : à la saisie des joueurs, l'étoile ☆ désigne une tête de série. Les têtes de série sont placées
+    dans des poules différentes (aperçu : ★). S'il y a plus de têtes de série que de poules, elles sont réparties
+    au plus équitablement.
+  - L'équilibrage « selon le niveau » s'appuie sur la moyenne de tournoi quand elle existe, sinon sur celle de l'entraînement.
+  - Règles Firebase : nouveaux jeux « tr-301 », « tr-501 », « tr-701 » à republier (voir GUIDE-SYNCHRONISATION.txt).
+    Sans cela, les records de tournoi restent sur le téléphone avec « Envoi refusé ».
+
+V11 (octobre 2026)
+  - Match de tournoi : l'écran à clavier (fléchette par fléchette, avec les boutons Annuler / Raté / Bull) est
+    remplacé par le tableau de score du « 501 tableau » de l'entraînement : chaque joueur inscrit le total de sa
+    volée (0 à 180), la colonne de chaque joueur affiche son nom, le reste à faire et la sortie conseillée.
+  - Toute case se corrige, à tout moment, jusqu'à la validation du match : le reste, les manches gagnées et le
+    score du match se recalculent seuls. Les manches précédentes se rouvrent par les onglets M1, M2, M3...
+  - Un total refusé (dépassement, reste de 1 avec sortie sur double, sortie impossible comme 169) apparaît barré
+    et ne compte pas, comme dans le 501 tableau. Après la sortie d'un joueur, les cases suivantes sont bloquées.
+  - Quand un joueur atteint le nombre de manches gagnantes, le bouton « Valider le résultat » apparaît : le résultat
+    n'est transmis au tournoi qu'à ce moment. Les meilleurs scores (volée, checkout, moyenne) sont envoyés aussi à
+    la validation, pour qu'une erreur de saisie corrigée ensuite n'entre jamais dans les records.
+  - Le lanceur alterne à chaque manche ; la manche décisive se joue toujours à la bulle.
+  - Écran de match en plein cadre : les noms, les manches gagnées et le reste à faire restent fixes en haut,
+    seul le tableau défile. Il s'adapte au clavier du téléphone.
+  - Moyenne d'un match : points marqués divisés par le nombre de volées (la volée de sortie compte pour une
+    volée entière), donc légèrement inférieure à la moyenne réelle ; le nombre de fléchettes de la sortie n'est plus saisi.
+    Le record « manche la plus courte en fléchettes » n'est donc plus alimenté par les matchs de tournoi.
+  - Poules : tout le monde rencontre tout le monde, y compris à 4 joueurs (6 matchs). Le classement n'est définitif
+    qu'une fois tous les matchs de la poule joués (« classement provisoire » affiché jusque-là) ; les deux premiers
+    sont qualifiés. Égalité de victoires : confrontation directe (à deux), puis différence de manches, manches
+    gagnées, moyenne. Fin du « match des vainqueurs », du « match des perdants » et du barrage.
+  - 501 tableau (entraînement) : colonnes resserrées pour que 4 joueurs tiennent sur l'écran d'un téléphone ;
+    la bande des joueurs (noms, reste à faire) puis la ligne des noms du tableau restent collées en haut pendant
+    que le tableau défile avec la page.
+  - Aucun changement des règles Firebase : rien à republier. Un tournoi commencé en V10 doit être terminé en V10
+    (le format des poules de 4 a changé).
+
 V10 (octobre 2026)
   - Tournoi partagé entre plusieurs téléphones (une cible par téléphone) : le premier téléphone crée le tournoi
     et laisse « Partager avec les autres téléphones » activé ; les autres le rejoignent depuis « Compétition ».

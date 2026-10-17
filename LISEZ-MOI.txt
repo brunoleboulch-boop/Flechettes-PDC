@@ -20,8 +20,9 @@ Ce qui a changé par rapport à votre fichier d'origine
   - Le thème choisi et le dernier onglet utilisé sont mémorisés.
   - Bouton « Meilleurs scores » : podium du club (3 meilleurs, une place par personne) et records personnels.
   - Partage des scores : texte à envoyer par message, fichier exportable/importable.
-  - Les noms des joueurs restent toujours visibles : ligne des noms fixe dans Capital et 501 (tableau),
-    tableau collé en haut dans le Cricket, joueurs côte à côte dans 501/301/701 clavier.
+  - Les noms des joueurs restent toujours visibles : bande des joueurs et ligne des noms collées en haut dans
+    501 (tableau) et dans les matchs de tournoi, ligne des noms fixe dans Capital, tableau collé en haut dans
+    le Cricket, joueurs côte à côte dans 501/301/701 clavier.
   - Capital : les deux lignes « 19 » sont distinguées (« 19 (maximum) » et « 19 (moins de 20) »).
   - Cricket : le bouton « Annuler » retire maintenant aussi les marques et les points.
   - 501/301/701 clavier : un tour « anti-jeu » ne compte plus dans la moyenne.
@@ -46,22 +47,28 @@ Page d'accueil : Entraînement ou Compétition
 Compétition (tournoi)
   1. Choisir le jeu (501 par défaut), la sortie sur double, le format des matchs (poules, tableau jusqu'aux quarts,
      demi-finales, finale : de la manche sèche au meilleur de 9) et la consolante. Le bouton « Appliquer les réglages
-     de l'Open National FFD » règle tout d'un coup (poules en 3 manches, tableau en 5, demi-finales et finale en 7). Saisir les joueurs (de 3 à 32) ou toucher les joueurs habituels pour les ajouter.
+     de l'Open National FFD » règle tout d'un coup (poules en 3 manches, tableau en 5, demi-finales et finale en 7). Saisir les joueurs (de 3 à 32) ou toucher les joueurs habituels pour les ajouter. L'étoile ☆ d'un joueur
+     en fait une tête de série : les têtes de série sont placées dans des poules différentes.
   2. « Composer les poules » : les poules sont équilibrées (3 ou 4 joueurs ; à 5 joueurs, une poule unique).
      La répartition suit les meilleures moyennes connues au club, ou le tirage au sort. « Refaire le tirage » est possible.
-  3. Poule de 4 : deux matchs au premier tour ; les vainqueurs se rencontrent (le gagnant est qualifié) ; les perdants
-     se rencontrent (le perdant est éliminé) ; les deux autres jouent un barrage. Chacun joue donc 2 ou 3 matchs.
-     Poule de 3 : chacun rencontre les deux autres (égalité : confrontation directe, puis différence de manches).
-     Deux qualifiés par poule.
+  3. Dans chaque poule, chacun rencontre tous les autres (3 matchs à 3 joueurs, 6 à 4 joueurs). Le classement n'est
+     définitif qu'une fois TOUS les matchs de la poule joués : les deux premiers sont alors qualifiés. Égalité de
+     victoires : nombre de manches gagnées, puis confrontation directe (à deux), différence de manches, moyenne.
   4. Chaque match : « Jouer » ou « Saisir le résultat » (gagnant et manches du perdant) pour un match joué ailleurs.
-     Avant « Jouer », on désigne le lanceur (bouton « Tirer à pile ou face »). Le lanceur change ensuite à chaque
-     manche ; la manche décisive se joue à la bulle : on désigne le joueur le plus près du centre, qui commence. Un résultat se corrige tant que le match suivant
-     n'est pas joué.
+     Avant « Jouer », on désigne le lanceur (bouton « Tirer à pile ou face »). Le match se joue dans un tableau de
+     score : chaque joueur inscrit le total de sa volée (0 à 180) dans sa colonne. Le reste à faire et la sortie
+     conseillée s'affichent en haut. Un total refusé (dépassement, reste de 1, sortie impossible) apparaît barré.
+     Toute case se corrige à tout moment ; les onglets M1, M2... rouvrent les manches précédentes. Le lanceur change
+     à chaque manche ; la manche décisive se joue à la bulle : on désigne le joueur le plus près du centre, qui
+     commence. Quand le match est gagné, « Valider le résultat » l'envoie au tournoi. Un résultat validé se corrige
+     ensuite par « Modifier le résultat » (gagnant et manches), tant que le match suivant n'est pas joué.
   5. Poules terminées : « Lancer le tableau final ». Les qualifiés sont placés pour que deux joueurs d'une même poule
      ne se rencontrent pas au premier tour ; s'il manque des joueurs pour remplir le tableau, les mieux classés
      sont qualifiés d'office. Les éliminés des poules jouent la consolante (onglet « Consolante »).
   6. « Copier le récapitulatif » donne un texte à coller dans un message. « Nouveau tournoi » efface le tournoi.
-  Les moyennes, volées et checkouts réalisés dans les matchs joués dans l'application comptent pour les meilleurs scores.
+  Les moyennes, volées et checkouts réalisés dans les matchs joués dans l'application alimentent un classement
+  « Tournoi 301 / 501 / 701 », séparé de l'entraînement, au moment de la validation du match (moyenne = points
+  marqués divisés par le nombre de volées).
 
 Plusieurs cibles, plusieurs téléphones (avec la base du club)
   1. Avant la première utilisation : republier les règles Firebase (GUIDE-SYNCHRONISATION.txt, « Passage à la V10 »).

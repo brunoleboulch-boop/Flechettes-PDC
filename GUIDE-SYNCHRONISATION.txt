@@ -43,6 +43,17 @@ Mise en place (environ 10 minutes, gratuit, sans carte bancaire)
      - Sur un second téléphone, constater que les scores du premier apparaissent.
      - Si le message indique « Envoi refusé », les règles de l'étape 3 ne sont pas publiées correctement.
 
+Passage à la V12 (classement « Tournoi » séparé) : republier les règles
+  Le fichier firebase-rules.json de la V12 ajoute les jeux « tr-301 », « tr-501 » et « tr-701 » (records de tournoi).
+  Même marche à suivre : Realtime Database > Règles > remplacer tout le contenu par celui du fichier > Publier.
+  À faire une seule fois, de préférence AVANT une soirée (pas pendant). Sans cela, les records de tournoi restent
+  sur le téléphone avec « Envoi refusé » ; le tournoi lui-même n'est pas touché.
+
+Passage à la V11 : rien à republier
+  La V11 ne modifie pas les règles Firebase. Seuls les fichiers de l'application changent (GitHub).
+  Les règles publiées pour la V10 conviennent. Un tournoi partagé commencé en V10 doit être terminé en V10 ;
+  tous les téléphones qui participent à un même tournoi doivent avoir la même version (affichée sous le titre).
+
 Passage à la V10 (tournoi partagé entre plusieurs téléphones) : republier les règles
   Le fichier firebase-rules.json de la V10 contient une nouvelle section « tournoi ».
   Même marche à suivre que pour les versions précédentes : Realtime Database > Règles > remplacer tout le contenu

@@ -5,7 +5,7 @@
     "records": {
       ".read": true,
       "$game": {
-        ".validate": "$game === 'capital' || $game === 'x501t' || $game === 'x01-301' || $game === 'x01-501' || $game === 'x01-701' || $game === 'cricket'",
+        ".validate": "$game === 'capital' || $game === 'x501t' || $game === 'x01-301' || $game === 'x01-501' || $game === 'x01-701' || $game === 'cricket' || $game === 'tr-301' || $game === 'tr-501' || $game === 'tr-701'",
         "$player": {
           ".validate": "$player.length > 0 && $player.length <= 40",
           "$metric": {
