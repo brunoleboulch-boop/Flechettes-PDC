@@ -1,6 +1,16 @@
 HISTORIQUE DES VERSIONS - Application Fléchettes PDC
 ====================================================
 
+V13 (octobre 2026)
+  - Têtes de série automatiques : le bouton « Têtes de série automatiques (victoires en tournoi) » de la configuration
+    coche les meilleurs joueurs saisis, au nombre de poules, d'après le nombre de matchs gagnés dans les tournois
+    précédents (poules, tableau et consolante). À égalité : pourcentage de victoires, titres, différence de manches.
+    Les têtes de série restent modifiables à la main (☆ / ★).
+  - L'historique est constitué des tournois terminés sur ce téléphone, enregistrés automatiquement (chaque tournoi
+    une seule fois). Les tournois joués avant la V13 n'y figurent pas. Un joueur sans historique n'est jamais
+    désigné tête de série automatique.
+  - Aucun changement des règles Firebase : rien à republier par rapport à la V12.
+
 V12 (octobre 2026)
   - Poules : à égalité de victoires, le classement regarde d'abord le nombre de manches gagnées, puis la
     confrontation directe (à deux), la différence de manches et la moyenne.

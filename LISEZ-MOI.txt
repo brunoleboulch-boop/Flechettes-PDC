@@ -48,7 +48,8 @@ Compétition (tournoi)
   1. Choisir le jeu (501 par défaut), la sortie sur double, le format des matchs (poules, tableau jusqu'aux quarts,
      demi-finales, finale : de la manche sèche au meilleur de 9) et la consolante. Le bouton « Appliquer les réglages
      de l'Open National FFD » règle tout d'un coup (poules en 3 manches, tableau en 5, demi-finales et finale en 7). Saisir les joueurs (de 3 à 32) ou toucher les joueurs habituels pour les ajouter. L'étoile ☆ d'un joueur
-     en fait une tête de série : les têtes de série sont placées dans des poules différentes.
+     en fait une tête de série : les têtes de série sont placées dans des poules différentes. Le bouton « Têtes de
+     série automatiques » coche les meilleurs d'après les victoires des tournois précédents terminés sur ce téléphone.
   2. « Composer les poules » : les poules sont équilibrées (3 ou 4 joueurs ; à 5 joueurs, une poule unique).
      La répartition suit les meilleures moyennes connues au club, ou le tirage au sort. « Refaire le tirage » est possible.
   3. Dans chaque poule, chacun rencontre tous les autres (3 matchs à 3 joueurs, 6 à 4 joueurs). Le classement n'est
