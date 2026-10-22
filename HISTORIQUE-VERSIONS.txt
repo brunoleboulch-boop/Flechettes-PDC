@@ -1,6 +1,26 @@
 HISTORIQUE DES VERSIONS - Application Fléchettes PDC
 ====================================================
 
+V16 (octobre 2026)
+  - Freeze : le joueur gelé est pris dans un glaçon (carte bleutée avec reflets, mention « ❄ gelé ❄ », nom de la colonne
+    du tableau en bleu glace). Le glaçon disparaît dès que le joueur peut de nouveau finir.
+
+V15 (octobre 2026)  [la V14 n'a pas été diffusée : ses nouveautés sont dans la V15]
+  - Nouveau design : en-tête compact (logo et titre sur une ligne), accueil en cartes de couleur (Compétition, Capital,
+    501 tableau, X01, Cricket : un toucher ouvre directement le jeu), barre de navigation en bas (Jouer, Compétition,
+    Records, Thème), thème sombre plus neutre. Les onglets de jeux tiennent sur une ligne, les boutons du haut sont
+    plus courts, la première ligne de saisie remonte d'environ un tiers de l'écran sur téléphone.
+  - 501 (tableau) : option « Équipes 2 contre 2 avec freeze ». Chaque joueur garde son propre 501. Un joueur est gelé
+    (mention « gelé » sur sa carte) tant que le reste à faire de son partenaire est supérieur à la somme des restes des
+    deux adversaires ; en cas d'égalité parfaite la sortie est autorisée. Une sortie d'un joueur gelé est refusée : la
+    case apparaît barrée en bleu et ne compte pas. L'équipe gagne quand ses deux joueurs sont à zéro. Choix des équipes :
+    J1 + J3 contre J2 + J4 (joueurs en alternance) ou J1 + J2 contre J3 + J4. Il faut exactement 4 joueurs. Les records ne
+    sont pas enregistrés dans ce mode.
+  - Capital : les scores ne sont plus enregistrés automatiquement pendant la saisie (un total partiel pouvait devenir un
+    record, par exemple avant un « 0 » qui divise le score par deux). Le bouton « Valider la partie » enregistre les scores
+    des joueurs nommés après confirmation, avec un avertissement si des lignes sont vides.
+  - Aucun changement des règles Firebase : rien à republier par rapport à la V12.
+
 V13 (octobre 2026)
   - Têtes de série automatiques : le bouton « Têtes de série automatiques (victoires en tournoi) » de la configuration
     coche les meilleurs joueurs saisis, au nombre de poules, d'après le nombre de matchs gagnés dans les tournois

@@ -85,6 +85,10 @@ Plusieurs cibles, plusieurs téléphones (avec la base du club)
      ou saisir le résultat. « Nouveau tournoi » clôture le tournoi pour tous les téléphones.
   Sans base commune, ou si le réseau tombe, le tournoi continue sur le téléphone qui l'organise.
 
+Freeze (501 tableau, 2 contre 2)
+  Cocher « Équipes 2 contre 2 avec freeze » (4 joueurs). Un joueur ne peut pas finir tant que le reste à faire de son
+  partenaire dépasse la somme des restes des deux adversaires (égalité parfaite : sortie autorisée). Voir HISTORIQUE-VERSIONS.
+
 Équipes
   Bouton « Joueurs et équipes » : donner un nom à l'équipe, toucher ses joueurs (2 à 4), « Créer l'équipe ».
   Dans n'importe quel jeu, l'équipe se choisit dans le champ nom comme un joueur ; elle compte alors pour un seul participant.
@@ -93,7 +97,7 @@ Plusieurs cibles, plusieurs téléphones (avec la base du club)
   enregistrés gardent les noms des joueurs qui les ont réalisés.
 
 Meilleurs scores
-  Capital : meilleur score.
+  Capital : meilleur score, enregistré uniquement au toucher de « Valider la partie ».
   501 (tableau) : partie la plus courte (en volées) et plus haute volée.
   301 / 501 / 701 (clavier) : manche la plus courte, plus haute volée, plus gros checkout, meilleure moyenne
   (la moyenne compte à partir de 9 fléchettes sur un match terminé).
