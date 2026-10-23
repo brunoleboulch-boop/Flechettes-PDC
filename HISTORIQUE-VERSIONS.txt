@@ -1,6 +1,28 @@
 HISTORIQUE DES VERSIONS - Application Fléchettes PDC
 ====================================================
 
+V18 (octobre 2026)
+  - Annulation sur plusieurs volées au X01 clavier et au Cricket clavier : « Annuler » revient fléchette par fléchette, y
+    compris sur la volée du joueur précédent, jusqu'à une soixantaine de fléchettes (environ vingt volées). Au X01 il n'est
+    pas possible de revenir avant le début de la manche en cours : une manche terminée a alimenté les records. Pour que
+    l'annulation ne laisse pas de record erroné, les meilleures volées du X01 ne sont plus envoyées aux records à chaque volée
+    mais à la fin de la manche (ou si l'on quitte la partie).
+  - Correction : depuis la V15, la barre de navigation du bas pouvait recouvrir la rangée « Annuler / Raté / Bull » du X01 et
+    du Cricket clavier sur certains téléphones. La page laisse maintenant la place nécessaire en bas.
+  - Rappel : au Capital, au 501 tableau, au Cricket tableau et en tournoi, les cases se corrigent librement ; le Cricket
+    tableau a son propre bouton « Annuler » sans limite.
+
+V17 (octobre 2026)
+  - Cricket en tableau, devenu le mode par défaut : une colonne par joueur (2 à 4), une ligne par numéro (20 à 15 et Bull).
+    Dans la case du joueur, on tape le nombre de marques faites au tour (0 à 9, 0 à 6 au Bull) ; il s'ajoute tout seul aux
+    marques précédentes. L'application indique si le numéro est fermé (Ⓧ, avec le total au-delà de 3) et calcule les points :
+    seules les marques au-delà de la troisième comptent, tant qu'au moins un adversaire n'a pas fermé le numéro. Le
+    gagnant (tout fermé, le plus de points) est signalé. « Annuler » retire la dernière saisie.
+  - Option Cut Throat : les points vont aux adversaires qui n'ont pas fermé le numéro, le gagnant est celui qui a tout fermé
+    avec le moins de points. Pas d'enregistrement de records dans ce mode.
+  - « Valider la partie » enregistre les points dans les records (comme au Capital). Le Cricket fléchette par fléchette
+    reste disponible par le sélecteur « Clavier (fléchette) » en haut de l'écran.
+
 V16 (octobre 2026)
   - Freeze : le joueur gelé est pris dans un glaçon (carte bleutée avec reflets, mention « ❄ gelé ❄ », nom de la colonne
     du tableau en bleu glace). Le glaçon disparaît dès que le joueur peut de nouveau finir.
