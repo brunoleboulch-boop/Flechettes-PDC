@@ -2,7 +2,7 @@
    Stratégie : on sert immédiatement ce qui est en cache (démarrage instantané, même sans réseau),
    et on met à jour le cache en arrière-plan. Une nouvelle version s'affiche donc au lancement suivant.
    Pour forcer un nettoyage complet après une grosse modification, augmentez CACHE_VERSION. */
-const CACHE_VERSION = 'pdc-V18';
+const CACHE_VERSION = 'pdc-V19';
 
 const PRECACHE = [
   './',
@@ -14,9 +14,8 @@ const PRECACHE = [
   './icons/icon-maskable-512.png',
   './icons/apple-touch-icon.png',
   './icons/favicon-48.png',
-  './fonts/oswald-latin-500-normal.woff2',
-  './fonts/oswald-latin-600-normal.woff2',
-  './fonts/oswald-latin-700-normal.woff2'
+  './fonts/outfit-latin-wght-normal.woff2',
+  './fonts/dm-sans-latin-wght-normal.woff2'
 ];
 
 self.addEventListener('install', (event) => {

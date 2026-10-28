@@ -1,6 +1,25 @@
 HISTORIQUE DES VERSIONS - Application Fléchettes PDC
 ====================================================
 
+V19 (octobre 2026)
+  - Nouveau design « bleu nuit et or » : en-tête et barre de navigation en verre dépoli, accueil avec grand bandeau « Nouvelle
+    partie » et quatre cartes (Tournoi, Entraînement, Records, Joueurs), polices Outfit et DM Sans intégrées (elles fonctionnent
+    hors connexion), thème sombre par défaut et thème clair en option (bouton rond en haut à droite).
+  - Nouvelle entrée « Jouer » : partie libre 301 / 501 / 701 pour 1 à 4 joueurs, sortie double ou simple, manche sèche ou meilleur
+    de 3, 5 ou 7. Les parties précédentes (Capital, 501 tableau, X01 fléchette par fléchette, Cricket) restent dans « Entraînement ».
+  - Saisie par volée dans une seule case : on tape le total de la volée sur un clavier tactile, puis ✓. Plus de tableau.
+  - Bouton « Retour » : annule la dernière volée, et on peut appuyer autant de fois que nécessaire pour remonter volée après
+    volée, même jusque dans la manche précédente. On peut aussi toucher une volée de l'historique pour la corriger.
+  - Le même écran de saisie sert aux matchs de tournoi (qui n'ont donc plus de tableau) : manche décisive à la bulle, onglets de
+    manches, validation du résultat, reprise après fermeture de l'application.
+  - Annonces vocales (voix du navigateur, hors connexion) : total de la volée, « Bust », reste à faire sous 170, « Jeu »,
+    « Jeu, set et match », « Cent quatre-vingts ! » avec bruit de foule. Le bouton haut-parleur coupe le son. Effets à l'écran
+    pour le 180, le « Ton » (100 et plus), le bust, la manche et le match.
+  - Écran de résultat : moyenne, meilleure volée, volées à 100 et plus, 180, meilleur checkout ; boutons Revanche (l'ordre
+    de passage tourne), WhatsApp et Partager. Le récapitulatif de tournoi a aussi un bouton WhatsApp.
+  - Les meilleurs scores d'une partie libre (volée, checkout, moyenne) sont envoyés aux records à la validation du match.
+  - Aucun changement des règles Firebase : rien à republier par rapport à la V12.
+
 V18 (octobre 2026)
   - Annulation sur plusieurs volées au X01 clavier et au Cricket clavier : « Annuler » revient fléchette par fléchette, y
     compris sur la volée du joueur précédent, jusqu'à une soixantaine de fléchettes (environ vingt volées). Au X01 il n'est
