@@ -2,7 +2,7 @@
    Stratégie : on sert immédiatement ce qui est en cache (démarrage instantané, même sans réseau),
    et on met à jour le cache en arrière-plan. Une nouvelle version s'affiche donc au lancement suivant.
    Pour forcer un nettoyage complet après une grosse modification, augmentez CACHE_VERSION. */
-const CACHE_VERSION = 'pdc-V19';
+const CACHE_VERSION = 'pdc-V19.1';
 
 const PRECACHE = [
   './',
@@ -20,7 +20,11 @@ const PRECACHE = [
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_VERSION).then((cache) => cache.addAll(PRECACHE)).then(() => self.skipWaiting())
+    caches.open(CACHE_VERSION)
+      .then((cache) => Promise.all(PRECACHE.map((u) =>
+        fetch(new Request(u, { cache: 'reload' })).then((r) => { if (r && r.ok) return cache.put(u, r); }).catch(() => {})
+      )))
+      .then(() => self.skipWaiting())
   );
 });
 
@@ -41,14 +45,18 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.open(CACHE_VERSION).then(async (cache) => {
       const cached = await cache.match(req, { ignoreSearch: true });
-      const network = fetch(req)
+      const network = fetch(req, { cache: 'no-cache' })
         .then((res) => {
           if (res && res.ok) cache.put(req, res.clone());
           return res;
         })
         .catch(() => null);
 
-      if (cached) return cached;                       // cache d'abord, mise à jour en arrière-plan
+      if (req.mode === 'navigate' || url.pathname.endsWith('/') || url.pathname.endsWith('.html')) {
+        const fresh = await network;                   // pages : réseau d'abord (nouvelle version immédiate), cache si hors connexion
+        if (fresh) return fresh;
+      }
+      if (cached) return cached;                       // le reste : cache d'abord, mise à jour en arrière-plan
       const res = await network;
       if (res) return res;
       if (req.mode === 'navigate') return cache.match('./index.html');  // hors connexion : on ouvre l'appli
