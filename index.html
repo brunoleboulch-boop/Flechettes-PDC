@@ -90,6 +90,13 @@
   .game-tab[data-mode="x501table"] { --gc: var(--accent); }
   .game-tab[data-mode="x01"] { --gc: var(--x01c); }
   .game-tab[data-mode="cricket"] { --gc: var(--cri); }
+  .snd-card { margin-top: 14px; padding: 16px; border-radius: 22px; border: 1px solid var(--line); background: var(--surface); }
+  .snd-h { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; font-family: var(--font-head); font-size: 1.05rem; }
+  .snd-sw { font-size: .8rem; font-weight: 600; color: var(--ink-soft); display: flex; align-items: center; gap: 6px; font-family: inherit; }
+  .snd-l { display: block; margin: 12px 0 6px; font-size: .78rem; font-weight: 700; color: var(--ink-soft); text-transform: uppercase; letter-spacing: .05em; }
+  .snd-card select { width: 100%; }
+  .snd-card input[type=range] { width: 100%; accent-color: var(--gold); }
+  .snd-row { margin-top: 8px; }
   .game-tab-link { --gc: var(--accent); }
   .game-tab.active { background: var(--gc); color: #fff; border-color: var(--gc); }
 
@@ -648,6 +655,16 @@
       <button class="home-tile t-grey" id="home-players"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.6 2.7-6 6-6s6 2.4 6 6"/><path d="M16 5.2a3 3 0 0 1 0 5.6M18 14.4c1.9.8 3 2.7 3 5.6"/></svg>
         <b>Joueurs</b><span>Joueurs et équipes du club</span></button>
     </div>
+    <section class="snd-card" id="snd-card">
+      <div class="snd-h"><b>Son et voix</b><label class="snd-sw"><input type="checkbox" id="snd-on"> Annonces et applaudissements</label></div>
+      <label class="snd-l" for="snd-voice">Voix de l'annonceur</label>
+      <select id="snd-voice" class="text-field"></select>
+      <div class="snd-row"><button type="button" class="tool-btn" id="snd-test-voice">▶ Écouter la voix</button></div>
+      <label class="snd-l" for="snd-vol">Volume des applaudissements</label>
+      <input type="range" id="snd-vol" min="20" max="100" step="10">
+      <div class="snd-row"><button type="button" class="tool-btn" id="snd-test-clap">👏 Tester les applaudissements</button></div>
+      <p class="hint" style="text-align:left;margin:8px 0 0;">Les voix disponibles dépendent de ton téléphone. Pense à monter le volume et à désactiver le mode silencieux.</p>
+    </section>
     <div class="toolbar" style="margin-top:14px;justify-content:center;">
       <button class="tool-btn" id="home-theme">🌓 Thème</button>
     </div>
@@ -3834,57 +3851,103 @@
   // SON : annonces vocales (voix du navigateur, hors connexion) et bruit de foule synthétisé
   // =====================================================
   var Sound = (function(){
-    var KEY = 'pdc_son_coupe', ctx = null, voice = null, picked = false;
-    function muted() { try { return localStorage.getItem(KEY) === '1'; } catch(e) { return false; } }
+    var KEY = 'pdc_son_coupe', VKEY = 'pdc_voix', AKEY = 'pdc_applaus_vol', ctx = null;
+    function lsGet(k) { try { return localStorage.getItem(k); } catch(e) { return null; } }
+    function lsSet(k, v) { try { localStorage.setItem(k, v); } catch(e) {} }
+    function muted() { return lsGet(KEY) === '1'; }
     function setMuted(m) {
-      try { localStorage.setItem(KEY, m ? '1' : '0'); } catch(e) {}
+      lsSet(KEY, m ? '1' : '0');
       if (m && window.speechSynthesis) { try { window.speechSynthesis.cancel(); } catch(e) {} }
     }
-    function pickVoice() {
-      if (picked) return voice;
-      var vs = [];
-      try { vs = window.speechSynthesis ? window.speechSynthesis.getVoices() : []; } catch(e) {}
-      if (!vs.length) return null;
-      picked = true;
-      var fr = vs.filter(function(v){ return /^fr[-_]FR/i.test(v.lang); });
-      if (!fr.length) fr = vs.filter(function(v){ return /^fr/i.test(v.lang); });
-      fr.sort(function(a, b){ return (b.localService ? 1 : 0) - (a.localService ? 1 : 0); });
-      voice = fr[0] || null;
-      return voice;
+    function allVoices() { try { return window.speechSynthesis ? window.speechSynthesis.getVoices() : []; } catch(e) { return []; } }
+    // voix françaises d'abord (locales avant en ligne) ; s'il n'y en a aucune, toutes les voix du téléphone
+    function voices() {
+      var vs = allVoices(), fr = vs.filter(function(v){ return /^fr/i.test(v.lang); });
+      if (!fr.length) fr = vs.slice();
+      fr.sort(function(a, b){
+        var pa = /^fr[-_]FR/i.test(a.lang) ? 0 : 1, pb = /^fr[-_]FR/i.test(b.lang) ? 0 : 1;
+        return pa - pb || (b.localService ? 1 : 0) - (a.localService ? 1 : 0) || a.name.localeCompare(b.name);
+      });
+      return fr;
     }
-    function speak(text) {
-      if (muted() || !window.speechSynthesis || !text) return;
+    function getVoiceId() { return lsGet(VKEY) || ''; }
+    function setVoiceId(id) { lsSet(VKEY, id || ''); }
+    function pickVoice() {
+      var vs = voices(), id = getVoiceId(), i;
+      if (id) for (i = 0; i < vs.length; i++) if (vs[i].voiceURI === id || vs[i].name === id) return vs[i];
+      return vs[0] || null;
+    }
+    function speak(text, force) {
+      if ((!force && muted()) || !window.speechSynthesis || !text) return;
       try {
         var u = new SpeechSynthesisUtterance(text);
-        u.lang = 'fr-FR'; u.rate = 1.0; u.pitch = 1.0;
-        var v = pickVoice(); if (v) u.voice = v;
+        u.lang = 'fr-FR'; u.rate = 1.0; u.pitch = 1.0; u.volume = 1;
+        var v = pickVoice(); if (v) { u.voice = v; u.lang = v.lang || 'fr-FR'; }
         window.speechSynthesis.cancel();
         window.speechSynthesis.speak(u);
       } catch(e) {}
     }
-    // Applaudissements : bruit filtré, enveloppe montante puis descendante, texture modulée
-    function crowd() {
-      if (muted()) return;
+    function volume() { var v = parseFloat(lsGet(AKEY)); return (v >= 0.2 && v <= 1) ? v : 1; }
+    function setVolume(v) { lsSet(AKEY, String(v)); }
+    // Applaudissements : lit de bruit + une centaine de claquements de mains aléatoires, fort et centré sur les médiums (audible sur un petit haut-parleur)
+    function crowd(force) {
+      if (!force && muted()) return;
       try {
         var AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
         ctx = ctx || new AC();
         if (ctx.state === 'suspended') ctx.resume();
-        var dur = 2.8, sr = ctx.sampleRate, buf = ctx.createBuffer(1, Math.floor(sr * dur), sr), d = buf.getChannelData(0), i;
-        for (i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
-        var src = ctx.createBufferSource(); src.buffer = buf;
-        var bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 1100; bp.Q.value = 0.5;
-        var g = ctx.createGain(), t = ctx.currentTime;
-        g.gain.setValueAtTime(0.0001, t);
-        g.gain.exponentialRampToValueAtTime(0.55, t + 0.4);
-        g.gain.setValueAtTime(0.55, t + 1.2);
-        g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-        var lfo = ctx.createOscillator(), lg = ctx.createGain();
-        lfo.frequency.value = 11; lg.gain.value = 0.18; lfo.connect(lg); lg.connect(g.gain);
-        src.connect(bp); bp.connect(g); g.connect(ctx.destination);
-        src.start(t); lfo.start(t); lfo.stop(t + dur);
+        var dur = 4.2, sr = ctx.sampleRate, t = ctx.currentTime + 0.02, i, k;
+        var master = ctx.createGain(); master.gain.value = 1.6 * volume();
+        var comp = ctx.createDynamicsCompressor(); comp.threshold.value = -24; comp.ratio.value = 6; comp.attack.value = 0.003; comp.release.value = 0.2;
+        master.connect(comp); comp.connect(ctx.destination);
+        // 1) lit de bruit (la foule)
+        var nb = ctx.createBuffer(1, Math.floor(sr * dur), sr), nd = nb.getChannelData(0);
+        for (i = 0; i < nd.length; i++) nd[i] = Math.random() * 2 - 1;
+        var ns = ctx.createBufferSource(); ns.buffer = nb;
+        var bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 1800; bp.Q.value = 0.6;
+        var ng = ctx.createGain();
+        ng.gain.setValueAtTime(0.0001, t); ng.gain.exponentialRampToValueAtTime(0.5, t + 0.35);
+        ng.gain.setValueAtTime(0.5, t + 1.9); ng.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+        ns.connect(bp); bp.connect(ng); ng.connect(master); ns.start(t);
+        // 2) claquements individuels
+        var cb = ctx.createBuffer(1, Math.floor(sr * 0.09), sr), cd = cb.getChannelData(0);
+        for (i = 0; i < cd.length; i++) cd[i] = (Math.random() * 2 - 1) * Math.exp(-i / (sr * 0.012));
+        for (k = 0; k < 170; k++) {
+          var x = Math.random(), at = t + 0.05 + (x < 0.5 ? x * 0.9 : 0.45 + (x - 0.5) * 6.8);   // montée rapide puis étalement
+          if (at > t + dur - 0.15) continue;
+          var env = at < t + 0.6 ? (at - t) / 0.6 : at < t + 2.6 ? 1 : Math.max(0, (t + dur - at) / (dur - 2.6));
+          var cs = ctx.createBufferSource(); cs.buffer = cb; cs.playbackRate.value = 0.8 + Math.random() * 0.7;
+          var f = ctx.createBiquadFilter(); f.type = 'bandpass'; f.frequency.value = 1200 + Math.random() * 2600; f.Q.value = 0.9;
+          var cg = ctx.createGain(); cg.gain.value = (0.5 + Math.random() * 0.9) * env;
+          cs.connect(f); f.connect(cg); cg.connect(master); cs.start(at);
+        }
       } catch(e) {}
     }
-    return { muted: muted, setMuted: setMuted, speak: speak, crowd: crowd };
+    return { muted: muted, setMuted: setMuted, speak: speak, crowd: crowd, voices: voices, getVoiceId: getVoiceId, setVoiceId: setVoiceId, volume: volume, setVolume: setVolume };
+  })();
+
+  // Réglages « Son et voix » de l'accueil : choix de la voix, volume des applaudissements, essais
+  (function(){
+    var sel = document.getElementById('snd-voice'), vol = document.getElementById('snd-vol'), on = document.getElementById('snd-on');
+    if (!sel) return;
+    function fill() {
+      var vs = Sound.voices(), cur = Sound.getVoiceId(), h = '';
+      if (!vs.length) { sel.innerHTML = '<option value="">Voix par défaut du téléphone</option>'; return; }
+      vs.forEach(function(v, i){
+        var id = v.voiceURI || v.name;
+        h += '<option value="' + escapeHtml(id) + '"' + ((cur ? (cur === id || cur === v.name) : i === 0) ? ' selected' : '') + '>' + escapeHtml(v.name + ' (' + v.lang + ')') + '</option>';
+      });
+      sel.innerHTML = h;
+    }
+    fill();
+    if (window.speechSynthesis) { try { window.speechSynthesis.addEventListener('voiceschanged', fill); } catch(e) { window.speechSynthesis.onvoiceschanged = fill; } }
+    sel.addEventListener('change', function(){ Sound.setVoiceId(sel.value); Sound.speak('Cent quatre-vingts !', true); });
+    vol.value = Math.round(Sound.volume() * 100);
+    vol.addEventListener('change', function(){ Sound.setVolume(Math.max(0.2, Math.min(1, vol.value / 100))); Sound.crowd(true); });
+    on.checked = !Sound.muted();
+    on.addEventListener('change', function(){ Sound.setMuted(!on.checked); });
+    document.getElementById('snd-test-voice').addEventListener('click', function(){ Sound.speak('Bruno, cent quarante. Il reste trois cent soixante et un.', true); });
+    document.getElementById('snd-test-clap').addEventListener('click', function(){ Sound.crowd(true); });
   })();
 
   // =====================================================
