@@ -90,6 +90,7 @@
   .game-tab[data-mode="x501table"] { --gc: var(--accent); }
   .game-tab[data-mode="x01"] { --gc: var(--x01c); }
   .game-tab[data-mode="cricket"] { --gc: var(--cri); }
+  .game-tab-link { --gc: var(--accent); }
   .game-tab.active { background: var(--gc); color: #fff; border-color: var(--gc); }
 
   .toolbar { display: flex; gap: 8px; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; justify-content: flex-start; margin-bottom: 12px; padding-bottom: 2px; }
@@ -397,6 +398,9 @@
   /* Le tableau défile avec la page ; la bande des joueurs puis la ligne des noms restent collées en haut de l'écran. */
   #panel-x501table .table-scroll.sticky-head { overflow: visible; overflow: clip; max-height: none; min-height: 0; }
   #panel-x501table .table-scroll.sticky-head thead th { top: var(--strip-h, 120px); }
+  /* Capital : même principe que le 501 tableau, pour que les noms restent visibles jusqu'au bas du tableau */
+  #panel-capital .table-scroll.sticky-head { overflow: visible; overflow: clip; max-height: none; min-height: 0; }
+  #panel-capital .table-scroll.sticky-head thead th { top: var(--cap-strip-h, 120px); }
 
   /* ---- Meilleurs scores + notifications ---- */
   #toast { position: fixed; left: 0; right: 0; bottom: calc(env(safe-area-inset-bottom, 0px) + 16px); display: none;
@@ -638,7 +642,7 @@
       <button class="home-tile t-red" data-go="tournament"><svg viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H5v2a3 3 0 0 0 3 3M16 6h3v2a3 3 0 0 1-3 3M12 13v4M9 20h6M10 17h4"/></svg>
         <b>Tournoi</b><span>Poules, tableau final, consolante</span><em id="home-comp-note">Nouveau tournoi</em></button>
       <button class="home-tile t-green" data-go="training"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="7"/><path d="M12 13V9M9.5 3h5M12 3v3"/></svg>
-        <b>Entraînement</b><span>Capital, 501 tableau, X01, Cricket</span></button>
+        <b>Entraînement</b><span>Capital et Cricket</span></button>
       <button class="home-tile t-blue" id="home-records"><svg viewBox="0 0 24 24"><path d="M5 20V10M12 20V4M19 20v-7"/></svg>
         <b>Records</b><span>Podium, moyennes, 180, checkouts</span></button>
       <button class="home-tile t-grey" id="home-players"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.6 2.7-6 6-6s6 2.4 6 6"/><path d="M16 5.2a3 3 0 0 1 0 5.6M18 14.4c1.9.8 3 2.7 3 5.6"/></svg>
@@ -659,8 +663,7 @@
 
   <div class="game-tabs">
     <button class="game-tab active" data-mode="capital">Capital</button>
-    <button class="game-tab" data-mode="x501table">501 tableau</button>
-    <button class="game-tab" data-mode="x01">X01</button>
+    <button class="game-tab game-tab-link" data-go="play">301 · 501 · 701 ›</button>
     <button class="game-tab" data-mode="cricket">Cricket</button>
     <button class="tool-btn" id="roster-toggle" title="Joueurs et équipes" aria-label="Joueurs et équipes">👥</button>
   </div>
@@ -927,6 +930,7 @@
   // ---------- Onglets de jeu ----------
   document.querySelectorAll('.game-tab').forEach(function(tab){
     tab.addEventListener('click', function(){
+      if (!tab.dataset.mode) return;   // lien vers « Jouer » : géré par la navigation
       document.querySelectorAll('.game-tab').forEach(function(t){ t.classList.remove('active'); });
       tab.classList.add('active');
       var mode = tab.dataset.mode;
@@ -938,7 +942,7 @@
 
   try {
     var savedMode = localStorage.getItem('pdc_mode');
-    var savedTab = savedMode && document.querySelector('.game-tab[data-mode="' + savedMode + '"]');
+    var savedTab = savedMode && document.querySelector('.game-tab[data-mode="' + savedMode + '"]');   // 501 tableau / X01 : remplacés par « Jouer »
     if (savedTab) savedTab.click();
   } catch(e) {}
 
@@ -2034,6 +2038,10 @@
     var headerRow = document.getElementById('cap-headerRow');
     var bodyRows = document.getElementById('cap-bodyRows');
     var playersStrip = document.getElementById('cap-playersStrip');
+    function syncCapStrip() { if (playersStrip.offsetHeight) document.documentElement.style.setProperty('--cap-strip-h', playersStrip.offsetHeight + 'px'); }
+    if (window.ResizeObserver) new ResizeObserver(syncCapStrip).observe(playersStrip);
+    window.addEventListener('resize', syncCapStrip);
+    setTimeout(syncCapStrip, 0);
     var recordEl = document.getElementById('cap-record');
     var playerCount = 0;
     var RECORD_KEY = 'pdc_capital_record';
