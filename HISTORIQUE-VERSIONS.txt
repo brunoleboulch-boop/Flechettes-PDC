@@ -5,7 +5,8 @@ V20 (novembre 2026)
   - Nouvelle organisation. Accueil : grand bouton « Nouvelle partie » puis tuiles Entraînement, Tournoi, Records, Joueurs, Son et voix.
     Barre du bas sur toutes les pages : Accueil, Entraînements, Records, Joueurs. Records et Joueurs ont chacun leur page.
   - Entraînement : une page de choix « Entraînement seul » ou « En club ».
-    En club : Capital, Cricket, 501 tableau (les jeux existants) et « Doubles avec adversaire » (D1 à D20 puis le centre, chacun son
+    En club : Capital, Cricket, X01 tableau (les jeux existants ; le tableau accepte maintenant 301, 501 ou 701 au choix, les records
+    du tableau restant réservés au 501) et « Doubles avec adversaire » (D1 à D20 puis le centre, chacun son
     tour par volées de 3 fléchettes, le premier au centre gagne).
     Entraînement seul, avec suivi des résultats : 51 Darts (objectifs 21, 31, 51 ; barème Winmau, niveaux 21 et 31 ajoutés pour les
     débutants), 420 (4 niveaux, règle du club), Mental Checkout (3 niveaux, règle proposée par l'application, pas celle de Winmau),

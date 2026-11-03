@@ -846,7 +846,7 @@
 
   <div class="game-tabs">
     <button class="game-tab active" data-mode="capital">Capital</button>
-    <button class="game-tab" data-mode="x501table">501 tableau</button>
+    <button class="game-tab" data-mode="x501table">X01 tableau</button>
     <button class="game-tab" data-mode="cricket">Cricket</button>
     <button class="tool-btn" id="roster-toggle" title="Joueurs et équipes" aria-label="Joueurs et équipes">👥</button>
   </div>
@@ -882,6 +882,11 @@
 
   <!-- ===================== 501 TABLEAU ===================== -->
   <div class="mode-panel" id="panel-x501table">
+    <div class="seg-mode" id="x501t-start" role="group" aria-label="Score de départ">
+      <button type="button" data-s="301">301</button>
+      <button type="button" data-s="501" class="on">501</button>
+      <button type="button" data-s="701">701</button>
+    </div>
     <div class="toolbar">
       <button class="tool-btn primary" id="x501t-addPlayer">+ Joueur</button>
       <button class="tool-btn" id="x501t-addRound">+ Manche</button>
@@ -902,7 +907,7 @@
         <tbody id="x501t-bodyRows"></tbody>
       </table>
     </div>
-    <p class="hint">Chaque partie démarre à 501. Saisissez le total marqué (0 à 180) par manche. Un score qui passe sous 0 ou tombe à 1 est refusé (« buisson »). Sortie affichée entre 2 et 170, toujours sur double.</p>
+    <p class="hint">Chaque partie démarre au score choisi en haut (301, 501 ou 701) ; les records du tableau ne comptent que pour le 501. Saisissez le total marqué (0 à 180) par manche. Un score qui passe sous 0 ou tombe à 1 est refusé (« buisson »). Sortie affichée entre 2 et 170, toujours sur double.</p>
     <p class="hint" id="x501t-freezeHint" style="display:none;">Freeze : un joueur ne peut pas finir tant que le reste à faire de son partenaire est supérieur à la somme des restes des deux adversaires. En cas d'égalité parfaite, la sortie est autorisée. Une sortie refusée apparaît barrée en bleu et ne compte pas. L'équipe gagne quand ses deux joueurs sont à zéro. Les records ne sont pas enregistrés dans ce mode.</p>
   </div>
 
@@ -2405,6 +2410,7 @@
     var playerCount = 0;
     var roundCount = 0;
     var START_SCORE = 501;
+    try { var svs = parseInt(localStorage.getItem('pdc_x501table_start'), 10); if (svs === 301 || svs === 501 || svs === 701) START_SCORE = svs; } catch(e) {}
 
     function buildThrows() {
       var arr = [];
@@ -2657,7 +2663,7 @@
         tag.textContent = t === 0 ? 'Équipe A' : (t === 1 ? 'Équipe B' : '');
         tag.className = 'team-tag' + (t === 0 ? ' tA' : (t === 1 ? ' tB' : ''));
       }
-      if (finished && !sim.fz) {
+      if (finished && !sim.fz && START_SCORE === 501) {
         var recNameInput = card.querySelector('.name-input');
         Records.submit('x501t', recNameInput ? recNameInput.value : '', { rounds: s0.rounds, volee: s0.maxVolee });
       }
@@ -2801,6 +2807,15 @@
     var tPanel = document.getElementById('panel-x501table');
     tPanel.addEventListener('input', persist);
     tPanel.addEventListener('click', function(){ setTimeout(persist, 0); });
+    var startBox = document.getElementById('x501t-start');
+    function markStart() { Array.prototype.forEach.call(startBox.querySelectorAll('button'), function(b){ b.classList.toggle('on', parseInt(b.dataset.s, 10) === START_SCORE); }); }
+    startBox.addEventListener('click', function(e){
+      var b = e.target.closest && e.target.closest('button[data-s]'); if (!b) return;
+      START_SCORE = parseInt(b.dataset.s, 10);
+      try { localStorage.setItem('pdc_x501table_start', String(START_SCORE)); } catch(err) {}
+      markStart(); updateAllTotals();
+    });
+    markStart(); updateAllTotals();
   })();
 
   // ---------- Moteur de checkout partagé (X01 clavier + Cricket bull) ----------
@@ -6037,7 +6052,7 @@
     function renderClub() {
       var h = topHtml('En club', 'screen-hub', '← Retour') + playerField('dr-player') + msgHtml();
       h += '<div class="dr-rows">';
-      [['capital', 'Capital', 'Un tableau de 18 lignes à remplir, jusqu\'à plusieurs joueurs.'], ['cricket', 'Cricket', '20 à 15 et Bull, avec tableau ou fléchette par fléchette.'], ['x501table', '501 tableau', 'Le 501 saisi dans un tableau, par manche.']].forEach(function(r){
+      [['capital', 'Capital', 'Un tableau de 18 lignes à remplir, jusqu\'à plusieurs joueurs.'], ['cricket', 'Cricket', '20 à 15 et Bull, avec tableau ou fléchette par fléchette.'], ['x501table', 'X01 tableau', 'Choisis 301, 501 ou 701, puis saisis le total de chaque manche dans un tableau.']].forEach(function(r){
         h += '<button type="button" class="dr-row" data-act="club-game" data-m="' + r[0] + '"><span><b>' + r[1] + '</b><small>' + r[2] + '</small></span><i aria-hidden="true">›</i></button>';
       });
       h += rowHtml('duel') + '</div>';
