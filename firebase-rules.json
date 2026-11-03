@@ -145,6 +145,52 @@
       "$other": {
         ".validate": false
       }
+    },
+    "suivi": {
+      ".read": true,
+      "$player": {
+        ".validate": "$player.length > 0 && $player.length <= 40",
+        "name": {
+          ".write": "!data.exists() && newData.exists()",
+          ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 20"
+        },
+        "obj": {
+          "$ctx": {
+            ".write": "newData.exists()",
+            ".validate": "($ctx === 'train' || $ctx === 'jeu' || $ctx === 'comp') && newData.isNumber() && newData.val() >= 1 && newData.val() <= 180"
+          }
+        },
+        "res": {
+          "$id": {
+            ".write": "!data.exists() && newData.exists()",
+            ".validate": "$id.length > 0 && $id.length <= 16 && newData.hasChildren(['k', 'd'])",
+            "k": {
+              ".validate": "newData.isString() && newData.val().length <= 12 && newData.val().matches(/^[a-z0-9-]+$/)"
+            },
+            "d": {
+              ".validate": "newData.isString() && newData.val().length === 10"
+            },
+            "v": {
+              ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 10000"
+            },
+            "a": {
+              ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 180"
+            },
+            "n": {
+              ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 1000"
+            },
+            "o": {
+              ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 1000"
+            },
+            "$other": {
+              ".validate": false
+            }
+          }
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
     }
   }
 }
