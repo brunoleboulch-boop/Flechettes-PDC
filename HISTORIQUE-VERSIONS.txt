@@ -1,6 +1,24 @@
 HISTORIQUE DES VERSIONS - Application Fléchettes PDC
 ====================================================
 
+V20 (novembre 2026)
+  - Nouvelle organisation. Accueil : grand bouton « Nouvelle partie » puis tuiles Entraînement, Tournoi, Records, Joueurs, Son et voix.
+    Barre du bas sur toutes les pages : Accueil, Entraînements, Records, Joueurs. Records et Joueurs ont chacun leur page.
+  - Entraînement : une page de choix « Entraînement seul » ou « En club ».
+    En club : Capital, Cricket, 501 tableau (les jeux existants) et « Doubles avec adversaire » (D1 à D20 puis le centre, chacun son
+    tour par volées de 3 fléchettes, le premier au centre gagne).
+    Entraînement seul, avec suivi des résultats : 51 Darts (objectifs 21, 31, 51 ; barème Winmau, niveaux 21 et 31 ajoutés pour les
+    débutants), 420 (4 niveaux, règle du club), Mental Checkout (3 niveaux, règle proposée par l'application, pas celle de Winmau),
+    tour de l'horloge (simple, double, triple), 100 fléchettes sur un champ, changer de champ (règle proposée par l'application),
+    position à l'oche, précision, score en 10 séries, doubles D1 à D20, finish, et une séance guidée avec minuteur par bloc.
+  - Page Joueurs : tableau de bord par joueur (moyenne obtenue sur les exercices, les jeux et la compétition, moyenne visée choisie
+    par le joueur, écart restant, courbe des 20 dernières moyennes, records aux exercices) et, en second onglet, joueurs et équipes.
+    La moyenne se calcule à partir de la V20 : exercices de score, parties libres et matchs de tournoi terminés sont enregistrés
+    (les parties jouées avant la V20 ne sont pas reconstituées).
+  - Résultats et moyennes visées partagés avec la base du club (nouvelle branche « suivi » des règles Firebase).
+  - IMPORTANT : republier firebase-rules.json dans Firebase (Realtime Database > Règles > Publier). Sans cela, les résultats restent
+    sur le téléphone et le tableau de bord l'indique.
+
 V19 (octobre 2026)
   - Nouveau design « bleu nuit et or » : en-tête et barre de navigation en verre dépoli, accueil avec grand bandeau « Nouvelle
     partie » et quatre cartes (Tournoi, Entraînement, Records, Joueurs), polices Outfit et DM Sans intégrées (elles fonctionnent
