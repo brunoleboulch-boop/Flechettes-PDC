@@ -705,8 +705,30 @@
   .dr-block .dr-ctx-h h3 { font-size: 1.05rem; }
   #view-training #roster-toggle { display: none; }
   #pl-tabs { margin-top: 4px; }
+
+  /* V20 — Capital et X01 tableau : total sous le nom, grandes cases de saisie par joueur */
+  #panel-capital .players-strip, #panel-x501table .players-strip { position: static; }
+  #panel-capital .table-scroll.sticky-head thead th, #panel-x501table .table-scroll.sticky-head thead th { top: var(--hdr-h, 62px); }
+  .col-head .th-name { display: block; overflow: hidden; text-overflow: ellipsis; }
+  .col-head .th-total { display: block; font-family: var(--font-head); font-weight: 800; font-size: 1.15rem; line-height: 1.2; color: var(--gold); }
+  #panel-x501table .players-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; overflow: visible; padding-bottom: 8px; }
+  #panel-x501table .player-card { flex: none; min-width: 0; }
+  #panel-x501table .player-card.active-turn { background: rgba(227,169,58,0.14); border-color: var(--gold); border-width: 2px; }
+  #panel-x501table .turn-cell { margin-top: 10px; }
+  #panel-x501table .turn-input { width: 100%; box-sizing: border-box; height: 64px; border-radius: 14px; border: 2px solid var(--line); background: var(--surface-2); color: var(--ink); text-align: center; font-family: var(--font-head); font-weight: 800; font-size: 2rem; padding: 0; }
+  #panel-x501table .turn-input:disabled { opacity: .45; }
+  #panel-x501table .player-card.active-turn .turn-input { background: var(--gold); border-color: var(--gold); color: #1a1405; }
+  #panel-x501table .turn-input:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+  #panel-x501table .turn-input::placeholder { color: inherit; opacity: .55; font-size: 1.1rem; font-weight: 600; }
+  #panel-x501table .turn-ok { display: none; width: 100%; margin-top: 8px; padding: 12px; }
+  #panel-x501table .player-card.active-turn .turn-ok { display: block; }
+  #panel-x501table .turn-last { min-height: 1.2em; margin-top: 6px; text-align: center; font-size: 0.8rem; color: var(--ink-soft); }
+  #panel-x501table .turn-tools { margin: 0 0 12px; }
+  #panel-x501table .turn-tools .tool-btn { width: 100%; padding: 13px; }
+  #panel-x501table .table-scroll { display: none; }
+  #panel-x501table.show-table .table-scroll { display: block; }
 </style>
-<meta name="pdc-build" content="20261103-1416">
+<meta name="pdc-build" content="20261103-1429">
 </head>
 <body>
 <nav class="bottom-nav" id="bottom-nav" aria-label="Navigation principale"><div class="bn-in">
@@ -891,6 +913,7 @@
     <div class="toolbar">
       <button class="tool-btn primary" id="x501t-addPlayer">+ Joueur</button>
       <button class="tool-btn" id="x501t-addRound">+ Manche</button>
+      <button class="tool-btn" id="x501t-toggle" aria-pressed="false">Voir le tableau</button>
       <button class="tool-btn" id="x501t-reset">Réinitialiser</button>
     </div>
     <div class="freeze-bar">
@@ -902,13 +925,14 @@
       <div class="hint" id="x501t-freezeStatus" style="display:none;margin:6px 0 0;text-align:left;"></div>
     </div>
     <div class="players-strip" id="x501t-playersStrip"></div>
+    <div class="turn-tools"><button type="button" class="tool-btn" id="x501t-undo">↺ Retour : annuler la dernière volée</button></div>
     <div class="table-scroll sticky-head">
       <table>
         <thead><tr id="x501t-headerRow"><th class="label-col">Manche</th></tr></thead>
         <tbody id="x501t-bodyRows"></tbody>
       </table>
     </div>
-    <p class="hint">Chaque partie démarre au score choisi en haut (301, 501 ou 701) ; les records du tableau ne comptent que pour le 501. Saisissez le total marqué (0 à 180) par manche. Un score qui passe sous 0 ou tombe à 1 est refusé (« buisson »). Sortie affichée entre 2 et 170, toujours sur double.</p>
+    <p class="hint">Chaque partie démarre au score choisi en haut (301, 501 ou 701) ; les records du tableau ne comptent que pour le 501. À chaque tour, le joueur dont la case est en couleur saisit le total de sa volée (0 à 180) puis valide. « Retour » annule la dernière volée ; « Voir le tableau » affiche toutes les manches, que l'on peut corriger. Un score qui passe sous 0 ou tombe à 1 est refusé (« buisson »). Sortie affichée entre 2 et 170, toujours sur double.</p>
     <p class="hint" id="x501t-freezeHint" style="display:none;">Freeze : un joueur ne peut pas finir tant que le reste à faire de son partenaire est supérieur à la somme des restes des deux adversaires. En cas d'égalité parfaite, la sortie est autorisée. Une sortie refusée apparaît barrée en bleu et ne compte pas. L'équipe gagne quand ses deux joueurs sont à zéro. Les records ne sont pas enregistrés dans ce mode.</p>
   </div>
 
@@ -2290,12 +2314,12 @@
       var th = document.createElement('th');
       th.className = 'col-head';
       th.dataset.col = col;
-      th.textContent = 'J' + col;
+      th.innerHTML = '<span class="th-name">J' + col + '</span><span class="th-total">0</span>';
       headerRow.appendChild(th);
 
       var nameInput = card.querySelector('.name-input');
       nameInput.addEventListener('input', function(){
-        th.textContent = nameInput.value.trim() || ('J' + col);
+        th.querySelector('.th-name').textContent = nameInput.value.trim() || ('J' + col);
       });
       attachRoster(nameInput);
 
@@ -2327,6 +2351,7 @@
       if (card) {
         var display = Number.isInteger(total) ? total : total.toFixed(1);
         card.querySelector('.player-total').textContent = display;
+        var thT = document.querySelector('#panel-capital th.col-head[data-col="' + col + '"] .th-total'); if (thT) thT.textContent = display;
       }
       resetValidateBtn();
     }
@@ -2340,7 +2365,7 @@
     function reset() {
       document.querySelectorAll('#panel-capital .score-input').forEach(function(el){ el.value = ''; });
       document.querySelectorAll('#panel-capital .name-input').forEach(function(el){ el.value = ''; });
-      document.querySelectorAll('#panel-capital .col-head').forEach(function(el){ el.textContent = 'J' + el.dataset.col; });
+      document.querySelectorAll('#panel-capital .col-head').forEach(function(el){ var n = el.querySelector('.th-name'); if (n) n.textContent = 'J' + el.dataset.col; });
       updateAllTotals();
       resetValidateBtn();
     }
@@ -2509,6 +2534,8 @@
         '<input class="name-input" type="text" placeholder="Joueur ' + col + '">' +
         '<div class="player-total-label">Reste à faire</div>' +
         '<div class="player-total">' + START_SCORE + '</div>' +
+        '<div class="turn-cell"><input class="turn-input" type="text" inputmode="numeric" maxlength="3" autocomplete="off" aria-label="Score de la volée" placeholder="Score" disabled>' +
+        '<button type="button" class="tool-btn primary turn-ok">Valider</button><div class="turn-last"></div></div>' +
         '<div class="player-checkout"></div>';
       card.querySelector('.remove-player-btn').addEventListener('click', function(){ removeColumn(col); });
       playersStrip.appendChild(card);
@@ -2516,14 +2543,14 @@
       var th = document.createElement('th');
       th.className = 'col-head';
       th.dataset.col = col;
-      th.textContent = 'J' + col;
+      th.innerHTML = '<span class="th-name">J' + col + '</span><span class="th-total">' + START_SCORE + '</span>';
       headerRow.appendChild(th);
 
       var nameInput = card.querySelector('.name-input');
       var editNameBtn = card.querySelector('.edit-name-btn');
       attachRoster(nameInput);
       nameInput.addEventListener('input', function(){
-        th.textContent = nameInput.value.trim() || ('J' + col);
+        th.querySelector('.th-name').textContent = nameInput.value.trim() || ('J' + col);
         if (freezeOn) renderFreezeStatus(simulate());
       });
       nameInput.addEventListener('blur', function(){
@@ -2542,6 +2569,10 @@
         nameInput.focus();
         nameInput.select();
       });
+
+      var turnInput = card.querySelector('.turn-input');
+      turnInput.addEventListener('keydown', function(e){ if (e.key === 'Enter') { e.preventDefault(); submitTurn(col); } });
+      card.querySelector('.turn-ok').addEventListener('click', function(){ submitTurn(col); });
 
       var checkoutEl = card.querySelector('.player-checkout');
       checkoutEl.addEventListener('click', function(){
@@ -2606,8 +2637,8 @@
       var order = colOrder();
       var fz = freezeOn && order.length === 4;
       var lay = teamsLayout();
-      var st = {};
-      order.forEach(function(c){ st[c] = { remaining: START_SCORE, finished: false, rounds: 0, maxVolee: 0, cells: [] }; });
+      var st = {}, turn = null;
+      order.forEach(function(c){ st[c] = { remaining: START_SCORE, finished: false, rounds: 0, maxVolee: 0, cells: [], last: null, lastBust: false }; });
       function isFrozenPos(pos) {
         var p = lay.partner[pos];
         var opp = [0, 1, 2, 3].filter(function(i){ return lay.team[i] !== lay.team[pos]; });
@@ -2623,20 +2654,23 @@
           var cell = { input: input, bust: false, freeze: false };
           s0.cells.push(cell);
           var raw = input.value.trim();
+          if (raw === '' && !s0.finished && !turn) turn = { tr: tr, col: c };   // premier joueur sans score : c'est son tour
           if (raw === '' || s0.finished) return;
           var val = parseInt(raw, 10);
           if (isNaN(val) || val < 0 || val > 180) return;
           var nr = s0.remaining - val;
-          s0.rounds++;
-          if (nr < 0 || nr === 1) { cell.bust = true; return; }
+          s0.rounds++; s0.last = val; s0.lastBust = false;
+          if (nr < 0 || nr === 1) { cell.bust = true; s0.lastBust = true; return; }
           if (nr === 0 && fz && isFrozenPos(pos)) { cell.freeze = true; return; }
           s0.remaining = nr;
           if (val > s0.maxVolee) s0.maxVolee = val;
           if (nr === 0) s0.finished = true;
         });
       });
-      var res = { st: st, order: order, fz: fz, lay: lay, frozen: {} };
+      var res = { st: st, order: order, fz: fz, lay: lay, frozen: {}, turn: turn, over: false };
       if (fz) order.forEach(function(c, pos){ res.frozen[c] = !st[c].finished && isFrozenPos(pos); });
+      if (fz) { var tms = [[], []]; order.forEach(function(c, pos){ tms[lay.team[pos]].push(c); }); res.over = tms.some(function(cols){ return cols.every(function(c){ return st[c].finished; }); }); }
+      if (res.over) res.turn = null;
       return res;
     }
 
@@ -2657,6 +2691,7 @@
       card.classList.toggle('frozen', !!sim.frozen[col]);
       var thEl = document.querySelector('#panel-x501table th.col-head[data-col="' + col + '"]');
       if (thEl) thEl.classList.toggle('frozen', !!sim.frozen[col]);
+      var thT = thEl && thEl.querySelector('.th-total'); if (thT) thT.textContent = remaining;
       var tag = card.querySelector('.team-tag');
       if (tag) {
         var pos = sim.order.indexOf(col);
@@ -2707,11 +2742,54 @@
       freezeStatus.textContent = parts.join('   ·   ') + (winner >= 0 ? '   ·   Victoire de l\'équipe ' + (winner ? 'B' : 'A') + ' !' : '');
     }
 
+    // ----- Saisie par grande case : le joueur dont c'est le tour saisit sa volée, la case change de couleur -----
+    function renderTurn(sim) {
+      var cur = sim && sim.turn ? String(sim.turn.col) : null;
+      playersStrip.querySelectorAll('.player-card').forEach(function(card){
+        var c = card.dataset.col, active = (c === cur);
+        card.classList.toggle('active-turn', active);
+        var inp = card.querySelector('.turn-input'); if (!inp) return;
+        inp.disabled = !active;
+        if (!active) inp.value = '';
+        var s0 = sim && sim.st ? sim.st[c] : null, last = card.querySelector('.turn-last');
+        if (last) last.textContent = (s0 && s0.last !== null && s0.last !== undefined) ? ('Dernière volée : ' + s0.last + (s0.lastBust ? ' (buisson)' : '')) : '';
+      });
+    }
+    function toastMsg(m) { if (window.PDCRecords) window.PDCRecords.toast(m); }
+    function focusTurn() {
+      var sim = simulate(); if (!sim.turn) return;
+      var card = playersStrip.querySelector('.player-card[data-col="' + sim.turn.col + '"]'), inp = card && card.querySelector('.turn-input');
+      if (inp) { try { inp.focus({ preventScroll: true }); } catch(e) { inp.focus(); } }
+    }
+    function submitTurn(col) {
+      col = String(col);
+      var sim = simulate();
+      if (!sim.turn || String(sim.turn.col) !== col) return;
+      var card = playersStrip.querySelector('.player-card[data-col="' + col + '"]'); if (!card) return;
+      var inp = card.querySelector('.turn-input'), raw = inp.value.trim();
+      if (!/^\d{1,3}$/.test(raw) || parseInt(raw, 10) > 180) { toastMsg('Saisis le total de la volée : un nombre de 0 à 180.'); return; }
+      var cell = sim.turn.tr.querySelector('.score-input[data-col="' + col + '"]'); if (!cell) return;
+      cell.value = String(parseInt(raw, 10)); inp.value = '';
+      cell.dispatchEvent(new Event('input', { bubbles: true }));   // met à jour les totaux et enregistre la partie
+      focusTurn();
+    }
+    // Retour : efface la dernière volée saisie (on peut appuyer autant de fois que nécessaire)
+    function undoLast() {
+      var rows = Array.from(bodyRows.children), order = colOrder();
+      for (var r = rows.length - 1; r >= 0; r--) for (var p = order.length - 1; p >= 0; p--) {
+        var inp = rows[r].querySelector('.score-input[data-col="' + order[p] + '"]');
+        if (inp && inp.value.trim() !== '') { inp.value = ''; inp.dispatchEvent(new Event('input', { bubbles: true })); focusTurn(); return; }
+      }
+    }
+
     function updateTotal(col) {
       var sim = simulate();
+      // Toutes les manches sont remplies et la partie continue : on ajoute une manche pour que le joueur suivant puisse saisir.
+      if (!sim.turn && !sim.over && sim.order.some(function(c){ return !sim.st[c].finished; })) { addRound(); sim = simulate(); }
       if (freezeOn) { sim.order.forEach(function(c){ renderCol(c, sim); }); }
       else renderCol(String(col), sim);
       renderFreezeStatus(sim);
+      renderTurn(sim);
     }
 
     function applyFreezeUI() {
@@ -2741,7 +2819,7 @@
       document.querySelectorAll('#panel-x501table .score-input').forEach(function(el){ el.value = ''; el.classList.remove('bust-cell', 'freeze-cell'); });
       document.querySelectorAll('#panel-x501table .name-input').forEach(function(el){ el.value = ''; el.readOnly = false; el.classList.remove('locked'); });
       document.querySelectorAll('#panel-x501table .edit-name-btn').forEach(function(el){ el.style.display = 'none'; });
-      document.querySelectorAll('#panel-x501table .col-head').forEach(function(el){ el.textContent = 'J' + el.dataset.col; });
+      document.querySelectorAll('#panel-x501table .col-head').forEach(function(el){ var n = el.querySelector('.th-name'); if (n) n.textContent = 'J' + el.dataset.col; });
       checkoutState = {};
       updateAllTotals();
     }
@@ -2749,6 +2827,16 @@
     document.getElementById('x501t-addPlayer').addEventListener('click', addPlayer);
     document.getElementById('x501t-addRound').addEventListener('click', addRound);
     document.getElementById('x501t-reset').addEventListener('click', reset);
+    document.getElementById('x501t-undo').addEventListener('click', undoLast);
+    var toggleBtn = document.getElementById('x501t-toggle');
+    function showTable(on) {
+      x501Panel.classList.toggle('show-table', on);
+      toggleBtn.textContent = on ? 'Masquer le tableau' : 'Voir le tableau';
+      toggleBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
+      try { localStorage.setItem('pdc_x501table_show', on ? '1' : '0'); } catch(e) {}
+    }
+    toggleBtn.addEventListener('click', function(){ showTable(!x501Panel.classList.contains('show-table')); });
+    try { showTable(localStorage.getItem('pdc_x501table_show') === '1'); } catch(e) { showTable(false); }
 
     for (var i = 0; i < 20; i++) addRound();
     for (var j = 0; j < 4; j++) addPlayer();
@@ -6387,6 +6475,14 @@
     function dashOpen() { Suivi.sync().then(function(){}, function(){}); dmsg = ''; renderDash(); }
 
     return { open: open, dashOpen: dashOpen };
+  })();
+
+  // Hauteur de l'en-tête de l'application (V20) : la ligne des noms et des totaux se colle juste en dessous.
+  (function(){
+    var h = document.getElementById('app-header');
+    function setH() { if (h) document.documentElement.style.setProperty('--hdr-h', h.offsetHeight + 'px'); }
+    setH(); window.addEventListener('resize', setH);
+    if (window.ResizeObserver && h) new ResizeObserver(setH).observe(h);
   })();
 
   // =====================================================

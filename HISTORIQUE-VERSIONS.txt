@@ -17,6 +17,13 @@ V20 (novembre 2026)
     La moyenne se calcule à partir de la V20 : exercices de score, parties libres et matchs de tournoi terminés sont enregistrés
     (les parties jouées avant la V20 ne sont pas reconstituées).
   - Résultats et moyennes visées partagés avec la base du club (nouvelle branche « suivi » des règles Firebase).
+  - Capital : le score de chaque joueur est affiché sous son nom, dans la ligne des noms qui reste collée en haut du tableau
+    (comme au Cricket), même quand on remplit les dernières lignes.
+  - X01 tableau : une grande case de saisie par joueur. La case du joueur dont c'est le tour est en couleur : il tape le total de sa
+    volée puis valide (touche Entrée ou bouton), et le tour passe au joueur suivant (les joueurs qui ont fini sont sautés).
+    Bouton « Retour » : annule la dernière volée, autant de fois que nécessaire. Bouton « Voir le tableau » : affiche toutes les
+    manches, que l'on peut corriger. Une manche est ajoutée automatiquement quand toutes sont remplies. Le reste à faire s'affiche
+    aussi sous le nom dans l'en-tête du tableau. Le freeze et le choix 301, 501, 701 fonctionnent comme avant.
   - Mise à jour automatique corrigée : l'application vérifie elle-même, à l'ouverture et au retour sur l'application, si une nouvelle
     version d'index.html est publiée, puis se recharge (jamais en plein match). Avant, elle ne s'en apercevait que si sw.js changeait ;
     une mise à jour contenant seulement index.html n'apparaissait donc qu'à la seconde ouverture.
