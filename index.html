@@ -706,6 +706,7 @@
   #view-training #roster-toggle { display: none; }
   #pl-tabs { margin-top: 4px; }
 </style>
+<meta name="pdc-build" content="20261103-1416">
 </head>
 <body>
 <nav class="bottom-nav" id="bottom-nav" aria-label="Navigation principale"><div class="bn-in">
@@ -6465,6 +6466,42 @@
     if (start === 'play') Play.autoResume();
   })();
 
+})();
+</script>
+
+<script>
+// Mise à jour automatique (V20) : l'application compare elle-même sa version à celle publiée sur GitHub.
+// Elle ne dépend plus d'un changement de sw.js : une simple mise à jour d'index.html est détectée à l'ouverture
+// et au retour sur l'application, puis la page se recharge (jamais en plein match : on attend la fin).
+(function(){
+  var meta = document.querySelector('meta[name="pdc-build"]'), cur = meta ? meta.getAttribute('content') : '';
+  if (!cur || !window.fetch) return;
+  var last = 0, waiting = '', timer = null;
+  function inMatch() { return document.body.classList.contains('live-match'); }
+  function reloadFor(b) {
+    try { if (sessionStorage.getItem('pdc_reload_for') === b) return; sessionStorage.setItem('pdc_reload_for', b); } catch(e) {}   // une seule tentative par version : pas de boucle
+    var t = document.getElementById('toast');
+    if (t) { var l = document.createElement('div'); l.textContent = 'Nouvelle version : mise à jour…'; t.appendChild(l); t.classList.add('show'); }
+    setTimeout(function(){ location.reload(); }, 700);
+  }
+  function apply(b) {
+    if (!inMatch()) { reloadFor(b); return; }
+    waiting = b;
+    if (!timer) timer = setInterval(function(){
+      if (waiting && !inMatch()) { var w = waiting; waiting = ''; clearInterval(timer); timer = null; reloadFor(w); }
+    }, 3000);
+  }
+  function check(force) {
+    if (!force && Date.now() - last < 30000) return;
+    last = Date.now();
+    fetch('index.html', { cache: 'no-store' }).then(function(r){ return r.ok ? r.text() : ''; }).then(function(t){
+      var m = /name="pdc-build" content="([^"]+)"/.exec(t);
+      if (m && m[1] !== cur) apply(m[1]);
+    }).catch(function(){});
+  }
+  window.addEventListener('load', function(){ setTimeout(function(){ check(true); }, 1500); });
+  document.addEventListener('visibilitychange', function(){ if (document.visibilityState === 'visible') check(false); });
+  window.addEventListener('pageshow', function(e){ if (e.persisted) check(false); });
 })();
 </script>
 

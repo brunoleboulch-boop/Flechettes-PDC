@@ -17,6 +17,9 @@ V20 (novembre 2026)
     La moyenne se calcule à partir de la V20 : exercices de score, parties libres et matchs de tournoi terminés sont enregistrés
     (les parties jouées avant la V20 ne sont pas reconstituées).
   - Résultats et moyennes visées partagés avec la base du club (nouvelle branche « suivi » des règles Firebase).
+  - Mise à jour automatique corrigée : l'application vérifie elle-même, à l'ouverture et au retour sur l'application, si une nouvelle
+    version d'index.html est publiée, puis se recharge (jamais en plein match). Avant, elle ne s'en apercevait que si sw.js changeait ;
+    une mise à jour contenant seulement index.html n'apparaissait donc qu'à la seconde ouverture.
   - IMPORTANT : republier firebase-rules.json dans Firebase (Realtime Database > Règles > Publier). Sans cela, les résultats restent
     sur le téléphone et le tableau de bord l'indique.
 
