@@ -1,7 +1,7 @@
 HISTORIQUE DES VERSIONS - Application Fléchettes PDC
 ====================================================
 
-V20 (novembre 2026)
+V20.5 (novembre 2026 ; les livraisons successives V20.0 à V20.4 sont regroupées ici)
   - Nouvelle organisation. Accueil : grand bouton « Nouvelle partie » puis tuiles Entraînement, Tournoi, Records, Joueurs, Son et voix.
     Barre du bas sur toutes les pages : Accueil, Entraînements, Records, Joueurs. Records et Joueurs ont chacun leur page.
   - Entraînement : une page de choix « Entraînement seul » ou « En club ».
@@ -24,6 +24,9 @@ V20 (novembre 2026)
     Bouton « Retour » : annule la dernière volée, autant de fois que nécessaire. Bouton « Voir le tableau » : affiche toutes les
     manches, que l'on peut corriger. Une manche est ajoutée automatiquement quand toutes sont remplies. Le reste à faire s'affiche
     aussi sous le nom dans l'en-tête du tableau. Le freeze et le choix 301, 501, 701 fonctionnent comme avant.
+  - Pavé numérique intégré : dans les exercices, le X01 tableau, le Capital et le Cricket, la saisie des scores se fait avec un pavé
+    collé en bas de l'écran (chiffres, effacer, Valider, Fermer) au lieu du clavier du téléphone, qui cachait les scores. Valider
+    enregistre la volée ; dans un tableau, il passe à la manche suivante du même joueur.
   - Mise à jour automatique corrigée : l'application vérifie elle-même, à l'ouverture et au retour sur l'application, si une nouvelle
     version d'index.html est publiée, puis se recharge (jamais en plein match). Avant, elle ne s'en apercevait que si sw.js changeait ;
     une mise à jour contenant seulement index.html n'apparaissait donc qu'à la seconde ouverture.
