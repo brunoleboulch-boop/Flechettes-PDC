@@ -11,6 +11,6 @@ window.PDC_CONFIG = {
   databaseURL: ''
 };
 window.PDC_PHOTO = {
-  url: '',
-  code: ''
-};
+           url: 'https://script.google.com/macros/s/AKfycbxMUiCJfXCTyPjBuWWSMBCkptB3trio5Nn7E6zRXSsXlywOHO7T2ROC6MiiDgy8k60/exec',
+           code: 'pdcTest7K2m'
+         };
